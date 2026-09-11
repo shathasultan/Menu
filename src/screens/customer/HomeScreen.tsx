@@ -8,7 +8,7 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { MainTabParamList, RootStackParamList } from '../../navigation/types';
 import { useData } from '../../data/DataContext';
 import { searchAll } from '../../data/repo';
-import { colors, fontFamily, radius, spacing } from '../../theme';
+import { colors, fontFamily, radius, shadow, spacing } from '../../theme';
 import { RestaurantCard } from '../../components/RestaurantCard';
 import { CodeChip } from '../../components/CodeChip';
 import { formatPrice } from '../../utils/format';
@@ -85,6 +85,9 @@ export function HomeScreen({ navigation }: Props) {
             )}
             {results.restaurants.length === 0 && results.products.length === 0 && (
               <View style={styles.empty}>
+                <View style={styles.emptyIconWrap}>
+                  <Ionicons name="search" size={22} color={colors.inkFaint} />
+                </View>
                 <Text style={styles.emptyTitle}>لا نتائج لـ«{query}»</Text>
                 <Text style={styles.emptyText}>جرّب اسم مطعم، اسم صنف، أو كود مثل A01.</Text>
               </View>
@@ -119,19 +122,20 @@ const styles = StyleSheet.create({
     paddingBottom: spacing.sm,
     justifyContent: 'center',
   },
-  searchIcon: { position: 'absolute', left: 30, top: 22 },
+  searchIcon: { position: 'absolute', right: 30, top: '50%', marginTop: -9 },
   searchInput: {
     backgroundColor: colors.surface,
     borderWidth: 1,
     borderColor: colors.line,
     borderRadius: radius.md,
     paddingVertical: 11,
-    paddingRight: 16,
-    paddingLeft: 40,
+    paddingRight: 40,
+    paddingLeft: 16,
     fontFamily: fontFamily.arabic,
     fontSize: 14.5,
     color: colors.ink,
     textAlign: 'right',
+    ...shadow.soft,
   },
   listContent: { paddingHorizontal: spacing.lg, paddingBottom: spacing.xxl },
   sectionTitle: { fontFamily: fontFamily.arabicBold, fontSize: 15, color: colors.ink },
@@ -143,6 +147,7 @@ const styles = StyleSheet.create({
     borderRadius: radius.lg,
     paddingHorizontal: 12,
     marginTop: spacing.sm,
+    ...shadow.soft,
   },
   resultRow: {
     flexDirection: 'row',
@@ -163,6 +168,15 @@ const styles = StyleSheet.create({
     writingDirection: 'ltr',
   },
   empty: { paddingVertical: 36, alignItems: 'center' },
+  emptyIconWrap: {
+    width: 48,
+    height: 48,
+    borderRadius: radius.pill,
+    backgroundColor: colors.surface2,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: spacing.sm,
+  },
   emptyTitle: { fontFamily: fontFamily.arabicSemiBold, fontSize: 14.5, color: colors.inkSoft },
   emptyText: { fontFamily: fontFamily.arabic, fontSize: 13, color: colors.inkFaint, marginTop: 4 },
 });

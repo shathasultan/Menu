@@ -3,7 +3,7 @@ import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import type { Product, Restaurant } from '../types';
-import { colors, fontFamily, radius, spacing } from '../theme';
+import { colors, fontFamily, radius, shadow, spacing } from '../theme';
 import { CodeChip } from './CodeChip';
 import { formatPrice } from '../utils/format';
 
@@ -77,8 +77,9 @@ const styles = StyleSheet.create({
     borderRadius: radius.lg,
     padding: 12,
     flex: 1,
+    ...shadow.card,
   },
-  pressed: { borderColor: colors.accent },
+  pressed: { borderColor: colors.accent, opacity: 0.9, transform: [{ scale: 0.98 }] },
   unavailable: { opacity: 0.55 },
   swatch: { width: 48, height: 48, borderRadius: radius.md, flexShrink: 0 },
   body: { flex: 1, minWidth: 0, gap: 3 },

@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Alert, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import type { Product, Restaurant } from '../../../types';
-import { colors, fontFamily, radius, spacing } from '../../../theme';
+import { colors, fontFamily, radius, shadow, spacing } from '../../../theme';
 import { Button } from '../../../components/Button';
 import { CodeChip } from '../../../components/CodeChip';
 import { formatPrice } from '../../../utils/format';
@@ -103,6 +103,9 @@ export function MenuTab({ restaurant }: { restaurant: Restaurant }) {
 
       {restaurant.categories.length === 0 && (
         <View style={styles.empty}>
+          <View style={styles.emptyIconWrap}>
+            <Ionicons name="folder-open-outline" size={20} color={colors.inkFaint} />
+          </View>
           <Text style={styles.emptyTitle}>ابدأ بإضافة تصنيف</Text>
           <Text style={styles.emptyText}>مثل «مشروبات ساخنة» أو «سناكس»، ثم أضف الأصناف داخله.</Text>
         </View>
@@ -220,6 +223,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   empty: { paddingVertical: 20, alignItems: 'center' },
+  emptyIconWrap: {
+    width: 44,
+    height: 44,
+    borderRadius: radius.pill,
+    backgroundColor: colors.surface2,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: spacing.sm,
+  },
   emptyTitle: { fontFamily: fontFamily.arabicSemiBold, fontSize: 14, color: colors.inkSoft },
   emptyText: { fontFamily: fontFamily.arabic, fontSize: 12.5, color: colors.inkFaint, marginTop: 4 },
   catBlock: { marginBottom: spacing.lg },

@@ -6,7 +6,7 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../../navigation/types';
 import { useData } from '../../data/DataContext';
 import { createRestaurant } from '../../data/repo';
-import { colors, fontFamily, radius, spacing } from '../../theme';
+import { colors, fontFamily, radius, shadow, spacing } from '../../theme';
 import { Avatar } from '../../components/Avatar';
 import { Button } from '../../components/Button';
 
@@ -52,7 +52,7 @@ export function OwnerLoginScreen({ navigation }: Props) {
             <Pressable
               key={r.id}
               onPress={() => navigation.navigate('OwnerDashboard', { slug: r.slug })}
-              style={styles.pickRow}
+              style={({ pressed }) => [styles.pickRow, pressed && styles.pickRowPressed]}
             >
               <Avatar name={r.name} hue={r.hue} />
               <View>
@@ -145,7 +145,9 @@ const styles = StyleSheet.create({
     borderColor: colors.line,
     borderRadius: radius.md,
     padding: 12,
+    ...shadow.soft,
   },
+  pickRowPressed: { borderColor: colors.accent, opacity: 0.9, transform: [{ scale: 0.98 }] },
   pickName: { fontFamily: fontFamily.arabicBold, fontSize: 14.5, color: colors.ink },
   pickType: { fontFamily: fontFamily.arabic, fontSize: 12.5, color: colors.inkSoft },
   divider: { flexDirection: 'row', alignItems: 'center', gap: 10, marginVertical: spacing.lg },

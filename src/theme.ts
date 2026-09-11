@@ -43,3 +43,20 @@ export const fontFamily = {
   arabicBold: 'IBMPlexSansArabic_700Bold',
   mono: 'IBMPlexMono_600SemiBold',
 };
+
+export const shadow = {
+  card: {
+    shadowColor: '#3A2A14',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.08,
+    shadowRadius: 10,
+    elevation: 3,
+  },
+  soft: {
+    shadowColor: '#3A2A14',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 6,
+    elevation: 1,
+  },
+};

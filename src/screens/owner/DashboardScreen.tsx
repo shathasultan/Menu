@@ -5,7 +5,7 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../../navigation/types';
 import { useData } from '../../data/DataContext';
 import { getRestaurant, updateRestaurant } from '../../data/repo';
-import { colors, fontFamily, radius, spacing } from '../../theme';
+import { colors, fontFamily, radius, shadow, spacing } from '../../theme';
 import { StatusPill } from '../../components/StatusPill';
 import { OverviewTab } from './tabs/OverviewTab';
 import { ProfileTab } from './tabs/ProfileTab';
@@ -128,6 +128,7 @@ const styles = StyleSheet.create({
     borderRadius: radius.lg,
     paddingVertical: 12,
     alignItems: 'center',
+    ...shadow.soft,
   },
   statNum: { fontFamily: fontFamily.mono, fontSize: 18, color: colors.ink, writingDirection: 'ltr' },
   statLabel: { fontFamily: fontFamily.arabic, fontSize: 11, color: colors.inkSoft, marginTop: 2 },

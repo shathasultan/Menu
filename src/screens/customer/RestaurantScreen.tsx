@@ -7,7 +7,7 @@ import type { RootStackParamList } from '../../navigation/types';
 import { useData } from '../../data/DataContext';
 import { getRestaurant, isFavorite, toggleFavorite } from '../../data/repo';
 import type { Product } from '../../types';
-import { colors, fontFamily, radius, spacing } from '../../theme';
+import { colors, fontFamily, radius, shadow, spacing } from '../../theme';
 import { Avatar } from '../../components/Avatar';
 import { StatusPill } from '../../components/StatusPill';
 import { ProductCard } from '../../components/ProductCard';
@@ -72,6 +72,9 @@ export function RestaurantScreen({ route, navigation }: Props) {
 
         {restaurant.categories.length === 0 ? (
           <View style={styles.empty}>
+            <View style={styles.emptyIconWrap}>
+              <Ionicons name="fast-food-outline" size={22} color={colors.inkFaint} />
+            </View>
             <Text style={styles.emptyTitle}>لا منيو بعد</Text>
             <Text style={styles.emptyText}>صاحب هذا المطعم لم يضف أصنافًا حتى الآن.</Text>
           </View>
@@ -156,6 +159,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface2,
     alignItems: 'center',
     justifyContent: 'center',
+    ...shadow.soft,
   },
   desc: {
     fontFamily: fontFamily.arabic,
@@ -188,6 +192,15 @@ const styles = StyleSheet.create({
   productGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
   productCell: { width: '47%' },
   empty: { paddingVertical: 30, alignItems: 'center' },
+  emptyIconWrap: {
+    width: 48,
+    height: 48,
+    borderRadius: radius.pill,
+    backgroundColor: colors.surface2,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: spacing.sm,
+  },
   emptyTitle: { fontFamily: fontFamily.arabicSemiBold, fontSize: 14.5, color: colors.inkSoft },
   emptyText: { fontFamily: fontFamily.arabic, fontSize: 13, color: colors.inkFaint, marginTop: 4 },
   notFound: { flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.bg },

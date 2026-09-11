@@ -2,7 +2,7 @@
 import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import type { Restaurant } from '../types';
-import { colors, fontFamily, radius, spacing } from '../theme';
+import { colors, fontFamily, radius, shadow, spacing } from '../theme';
 import { Avatar } from './Avatar';
 import { StatusPill } from './StatusPill';
 
@@ -17,6 +17,7 @@ export function RestaurantCard({
     <Pressable
       onPress={onPress}
       style={({ pressed }) => [styles.card, pressed && styles.pressed]}
+      hitSlop={4}
     >
       <Avatar name={restaurant.name} hue={restaurant.hue} />
       <View style={styles.body}>
@@ -43,8 +44,9 @@ const styles = StyleSheet.create({
     borderRadius: radius.lg,
     padding: 14,
     alignItems: 'flex-start',
+    ...shadow.card,
   },
-  pressed: { borderColor: colors.accent },
+  pressed: { borderColor: colors.accent, opacity: 0.9, transform: [{ scale: 0.98 }] },
   body: { flex: 1, minWidth: 0 },
   name: { fontFamily: fontFamily.arabicBold, fontSize: 15, color: colors.ink },
   tagline: { fontFamily: fontFamily.arabic, fontSize: 12.5, color: colors.inkSoft, marginTop: 2 },

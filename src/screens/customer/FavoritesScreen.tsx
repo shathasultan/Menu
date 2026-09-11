@@ -1,12 +1,13 @@
 // bt:ec52ad88d4b0903b
 import React from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/native';
 import type { RootStackParamList } from '../../navigation/types';
 import { useData } from '../../data/DataContext';
 import { listFavorites } from '../../data/repo';
-import { colors, fontFamily, radius, spacing } from '../../theme';
+import { colors, fontFamily, radius, shadow, spacing } from '../../theme';
 import { CodeChip } from '../../components/CodeChip';
 import { formatPrice } from '../../utils/format';
 
@@ -24,6 +25,9 @@ export function FavoritesScreen() {
 
       {favorites.length === 0 ? (
         <View style={styles.empty}>
+          <View style={styles.emptyIconWrap}>
+            <Ionicons name="heart-outline" size={22} color={colors.inkFaint} />
+          </View>
           <Text style={styles.emptyTitle}>لا أصناف في المفضلة بعد</Text>
           <Text style={styles.emptyText}>اضغط على أيقونة القلب داخل أي صنف لإضافته هنا.</Text>
         </View>
@@ -55,6 +59,15 @@ const styles = StyleSheet.create({
   title: { fontFamily: fontFamily.arabicBold, fontSize: 18, color: colors.ink },
   sub: { fontFamily: fontFamily.arabic, fontSize: 13, color: colors.inkSoft, marginTop: 4, marginBottom: spacing.lg },
   empty: { paddingVertical: 40, alignItems: 'center' },
+  emptyIconWrap: {
+    width: 48,
+    height: 48,
+    borderRadius: radius.pill,
+    backgroundColor: colors.surface2,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: spacing.sm,
+  },
   emptyTitle: { fontFamily: fontFamily.arabicSemiBold, fontSize: 14.5, color: colors.inkSoft },
   emptyText: { fontFamily: fontFamily.arabic, fontSize: 13, color: colors.inkFaint, marginTop: 4, textAlign: 'center' },
   card: {
@@ -63,6 +76,7 @@ const styles = StyleSheet.create({
     borderColor: colors.line,
     borderRadius: radius.lg,
     paddingHorizontal: 12,
+    ...shadow.soft,
   },
   row: {
     flexDirection: 'row',

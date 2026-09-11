@@ -1,7 +1,7 @@
 // bt:ec52ad88d4b0903b
 import React from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
-import { colors, fontFamily, radius, spacing } from '../theme';
+import { colors, fontFamily, radius, shadow, spacing } from '../theme';
 
 interface ButtonProps {
   label: string;
@@ -68,10 +68,10 @@ const styles = StyleSheet.create({
   },
   row: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   fullWidth: { width: '100%' },
-  accent: { backgroundColor: colors.accent },
+  accent: { backgroundColor: colors.accent, ...shadow.soft },
   ghost: { backgroundColor: 'transparent', borderWidth: 1, borderColor: colors.line },
   danger: { backgroundColor: 'transparent', borderWidth: 1, borderColor: colors.badSoft },
-  pressed: { opacity: 0.85 },
+  pressed: { opacity: 0.85, transform: [{ scale: 0.97 }] },
   disabled: { opacity: 0.5 },
   label: { fontFamily: fontFamily.arabicSemiBold, fontSize: 14.5, color: colors.inkSoft },
   labelAccent: { color: colors.accentInk },
