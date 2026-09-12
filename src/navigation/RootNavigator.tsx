@@ -14,7 +14,7 @@ import { RestaurantScreen } from '../screens/customer/RestaurantScreen';
 import { OwnerLoginScreen } from '../screens/owner/OwnerLoginScreen';
 import { DashboardScreen } from '../screens/owner/DashboardScreen';
 import { MerchantAuthScreen } from '../screens/merchant/MerchantAuthScreen';
-import { OwnerHomeScreen } from '../screens/merchant/OwnerHomeScreen';
+import { OwnerDashboardScreen } from '../screens/merchant/OwnerDashboardScreen';
 import { AdminLoginScreen } from '../screens/admin/AdminLoginScreen';
 import { AdminHomeScreen } from '../screens/admin/AdminHomeScreen';
 
@@ -102,7 +102,7 @@ export function RootNavigator() {
           options={{ headerShown: false }}
         />
         <Stack.Screen name="MerchantAuth" component={MerchantAuthScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="OwnerHome" component={OwnerHomeScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="OwnerHome" component={OwnerDashboardScreen} options={{ headerShown: false }} />
         <Stack.Screen name="AdminLogin" component={AdminLoginScreen} options={{ headerShown: false }} />
         <Stack.Screen name="AdminHome" component={AdminHomeScreen} options={{ headerShown: false }} />
       </Stack.Navigator>

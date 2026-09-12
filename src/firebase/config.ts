@@ -1,3 +1,4 @@
+import { Platform } from 'react-native';
 import { initializeApp, getApps, getApp } from 'firebase/app';
 import { initializeAuth, getAuth, type Auth } from 'firebase/auth';
 // @ts-expect-error -- getReactNativePersistence exists in firebase/auth's React Native runtime bundle but isn't declared in its shipped .d.ts
@@ -20,12 +21,19 @@ export const GOOGLE_WEB_CLIENT_ID =
 const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 
 let auth: Auth;
-try {
-  auth = initializeAuth(app, {
-    persistence: getReactNativePersistence(AsyncStorage),
-  });
-} catch {
+if (Platform.OS === 'web') {
+  // The browser build of firebase/auth already persists sessions itself
+  // (IndexedDB); the React Native AsyncStorage persistence path is for
+  // native only and can misbehave under react-native-web.
   auth = getAuth(app);
+} else {
+  try {
+    auth = initializeAuth(app, {
+      persistence: getReactNativePersistence(AsyncStorage),
+    });
+  } catch {
+    auth = getAuth(app);
+  }
 }
 
 export { app, auth };
