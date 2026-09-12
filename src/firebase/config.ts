@@ -1,5 +1,7 @@
 import { initializeApp, getApps, getApp } from 'firebase/app';
-import { initializeAuth, getReactNativePersistence, getAuth, type Auth } from 'firebase/auth';
+import { initializeAuth, getAuth, type Auth } from 'firebase/auth';
+// @ts-expect-error -- getReactNativePersistence exists in firebase/auth's React Native runtime bundle but isn't declared in its shipped .d.ts
+import { getReactNativePersistence } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 

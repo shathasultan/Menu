@@ -14,6 +14,7 @@ import {
 import { useFonts as useMonoFonts, IBMPlexMono_600SemiBold } from '@expo-google-fonts/ibm-plex-mono';
 import { colors } from './src/theme';
 import { DataProvider } from './src/data/DataContext';
+import { AuthProvider } from './src/firebase/AuthContext';
 import { RootNavigator } from './src/navigation/RootNavigator';
 
 SplashScreen.preventAutoHideAsync().catch(() => {});
@@ -48,12 +49,14 @@ export default function App() {
 
   return (
     <SafeAreaProvider>
-      <DataProvider>
-        <View style={styles.app}>
-          <StatusBar style="dark" />
-          <RootNavigator />
-        </View>
-      </DataProvider>
+      <AuthProvider>
+        <DataProvider>
+          <View style={styles.app}>
+            <StatusBar style="dark" />
+            <RootNavigator />
+          </View>
+        </DataProvider>
+      </AuthProvider>
     </SafeAreaProvider>
   );
 }

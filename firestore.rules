@@ -1,0 +1,154 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isSignedIn()
+        && exists(/databases/$(database)/documents/users/$(request.auth.uid))
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    function isOwner(venueId) {
+      return isSignedIn() && request.auth.uid == venueId;
+    }
+
+    function venueApproved(venueId) {
+      return exists(/databases/$(database)/documents/venues/$(venueId))
+        && get(/databases/$(database)/documents/venues/$(venueId)).data.status == 'approved';
+    }
+
+    function unchanged(field) {
+      return field in resource.data
+        ? request.resource.data[field] == resource.data[field]
+        : !(field in request.resource.data);
+    }
+
+    // ---------------------------------------------------------------------
+    // users/{uid} — merchant & admin account profiles. Customers never get
+    // an account; browsing is anonymous. `role` is settable only at create
+    // time (to "merchant") and is immutable from the client forever after —
+    // admin promotion happens out-of-band directly in the console.
+    // ---------------------------------------------------------------------
+    match /users/{uid} {
+      allow get: if isSignedIn() && request.auth.uid == uid;
+      allow list: if false;
+
+      allow create: if isSignedIn()
+        && request.auth.uid == uid
+        && request.resource.data.uid == uid
+        && request.resource.data.role == 'merchant'
+        && request.resource.data.via in ['email', 'google']
+        && request.resource.data.name is string
+        && request.resource.data.email is string
+        && request.resource.data.createdAt == request.time;
+
+      allow update: if isSignedIn()
+        && request.auth.uid == uid
+        && unchanged('role')
+        && unchanged('uid')
+        && unchanged('email')
+        && unchanged('createdAt');
+
+      allow delete: if false;
+    }
+
+    // ---------------------------------------------------------------------
+    // venues/{venueId} — one venue per merchant; the doc id IS the owning
+    // merchant's uid, which is what structurally caps accounts at one store.
+    // ---------------------------------------------------------------------
+    match /venues/{venueId} {
+      allow get: if resource.data.status == 'approved' || isOwner(venueId) || isAdmin();
+      allow list: if false;
+
+      allow create: if isOwner(venueId)
+        && request.resource.data.id == venueId
+        && request.resource.data.ownerId == request.auth.uid
+        && request.resource.data.status == 'pending'
+        && request.resource.data.name is string
+        && request.resource.data.type is string
+        && request.resource.data.createdAt == request.time
+        && request.resource.data.updatedAt == request.time;
+
+      // Owner may edit their own business data but never flip status/ownerId
+      // themselves. Admin may only touch moderation fields (status +
+      // updatedAt) — never rewrite the merchant's business data — and only
+      // along allowed transitions (approve, reject, or suspend-back-to-pending).
+      allow update: if (
+          isOwner(venueId)
+          && unchanged('status')
+          && unchanged('ownerId')
+          && unchanged('id')
+          && request.resource.data.updatedAt == request.time
+        ) || (
+          isAdmin()
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'updatedAt'])
+          && resource.data.status in ['pending', 'approved', 'rejected']
+          && request.resource.data.status in ['pending', 'approved', 'rejected']
+          && request.resource.data.updatedAt == request.time
+        );
+
+      allow delete: if false;
+
+      // ---------------------------------------------------------------
+      // venues/{venueId}/categories/{categoryId}
+      // ---------------------------------------------------------------
+      match /categories/{categoryId} {
+        allow get: if venueApproved(venueId) || isOwner(venueId) || isAdmin();
+        allow list: if venueApproved(venueId) || isOwner(venueId) || isAdmin();
+
+        allow create: if (isOwner(venueId) || isAdmin())
+          && request.resource.data.id == categoryId
+          && request.resource.data.letter is string
+          && request.resource.data.letter.size() == 1
+          && request.resource.data.name is string
+          && request.resource.data.nextSeq is int
+          && request.resource.data.nextSeq >= 1
+          && request.resource.data.order is int;
+
+        allow update: if (isOwner(venueId) || isAdmin())
+          && unchanged('id')
+          && unchanged('letter')
+          && request.resource.data.nextSeq is int
+          && request.resource.data.nextSeq >= 1;
+
+        allow delete: if isOwner(venueId) || isAdmin();
+      }
+
+      // ---------------------------------------------------------------
+      // venues/{venueId}/products/{productId} — `code` is permanent once
+      // assigned; it may never change after creation.
+      // ---------------------------------------------------------------
+      match /products/{productId} {
+        allow get: if venueApproved(venueId) || isOwner(venueId) || isAdmin();
+        allow list: if venueApproved(venueId) || isOwner(venueId) || isAdmin();
+
+        allow create: if (isOwner(venueId) || isAdmin())
+          && request.resource.data.id == productId
+          && request.resource.data.categoryId is string
+          && exists(/databases/$(database)/documents/venues/$(venueId)/categories/$(request.resource.data.categoryId))
+          && request.resource.data.code is string
+          && request.resource.data.nameAr is string
+          && request.resource.data.price is number
+          && request.resource.data.price >= 0
+          && request.resource.data.price <= 999
+          && request.resource.data.available is bool
+          && request.resource.data.order is int;
+
+        allow update: if (isOwner(venueId) || isAdmin())
+          && unchanged('id')
+          && unchanged('code')
+          && (!('price' in request.resource.data)
+              || (request.resource.data.price is number
+                  && request.resource.data.price >= 0
+                  && request.resource.data.price <= 999));
+
+        allow delete: if isOwner(venueId) || isAdmin();
+      }
+    }
+  }
+}
