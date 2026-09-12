@@ -1,6 +1,10 @@
-import { collection, doc, getDoc, onSnapshot, query, where } from 'firebase/firestore';
+import { collection, collectionGroup, doc, getDoc, onSnapshot, query, where } from 'firebase/firestore';
 import { db } from './config';
 import type { Venue, VenueCategory, VenueProduct } from './types';
+
+export interface SearchableProduct extends VenueProduct {
+  venueId: string;
+}
 
 function toVenue(id: string, data: any): Venue {
   return {
@@ -44,6 +48,22 @@ export function listenVenueProducts(venueId: string, cb: (products: VenueProduct
   return onSnapshot(collection(db, 'venues', venueId, 'products'), (snap) => {
     const products = snap.docs.map((d) => d.data() as VenueProduct);
     products.sort((a, b) => a.order - b.order);
+    cb(products);
+  });
+}
+
+// Every product belonging to an approved venue, across all venues — the
+// index behind "ابحث بالرمز" (search by code) from any screen. Relies on
+// the denormalized `venueApproved` flag (see firestore.rules) since a plain
+// collectionGroup query can't be proven safe against a get() on each
+// product's parent venue.
+export function listenSearchableProducts(cb: (products: SearchableProduct[]) => void): () => void {
+  const q = query(collectionGroup(db, 'products'), where('venueApproved', '==', true));
+  return onSnapshot(q, (snap) => {
+    const products = snap.docs.map((d) => {
+      const venueId = d.ref.parent.parent!.id;
+      return { ...(d.data() as VenueProduct), venueId };
+    });
     cb(products);
   });
 }

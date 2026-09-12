@@ -41,4 +41,8 @@ export interface VenueProduct {
   available: boolean;
   photoUrl?: string;
   order: number;
+  /** Denormalized copy of the parent venue's `status === 'approved'`, kept
+   *  in sync by adminService.setVenueStatus — lets a cross-venue search
+   *  query be provably scoped to approved venues only. */
+  venueApproved: boolean;
 }

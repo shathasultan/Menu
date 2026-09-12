@@ -3,11 +3,13 @@ import {
   collectionGroup,
   doc,
   getDoc,
+  getDocs,
   onSnapshot,
   query,
   serverTimestamp,
   updateDoc,
   where,
+  writeBatch,
 } from 'firebase/firestore';
 import { db } from './config';
 import type { Venue, VenueStatus } from './types';
@@ -49,6 +51,16 @@ export function listenVenuesByStatus(status: VenueStatus, cb: (venues: Venue[]) 
   });
 }
 
-export function setVenueStatus(venueId: string, status: VenueStatus): Promise<void> {
-  return updateDoc(doc(db, 'venues', venueId), { status, updatedAt: serverTimestamp() });
+export async function setVenueStatus(venueId: string, status: VenueStatus): Promise<void> {
+  // Keep every product's denormalized `venueApproved` flag in sync with the
+  // venue's own status in one atomic batch, so the cross-venue search index
+  // (collectionGroup query) never observes a venue and its products
+  // disagreeing about approval.
+  const productsSnap = await getDocs(collection(db, 'venues', venueId, 'products'));
+  const batch = writeBatch(db);
+  batch.update(doc(db, 'venues', venueId), { status, updatedAt: serverTimestamp() });
+  productsSnap.docs.forEach((d) => {
+    batch.update(d.ref, { venueApproved: status === 'approved' });
+  });
+  await batch.commit();
 }

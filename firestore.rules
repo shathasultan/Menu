@@ -129,8 +129,16 @@ service cloud.firestore {
       // assigned; it may never change after creation.
       // ---------------------------------------------------------------
       match /products/{productId} {
+        // `venueApproved` is a denormalized copy of the parent venue's
+        // approval state, kept in sync by the admin batch update in
+        // setVenueStatus(). It exists solely so a cross-venue
+        // collectionGroup('products') search query — used for "ابحث
+        // بالرمز" across all venues — has a rule branch Firestore can
+        // prove directly from the query's own filter, which a get() on
+        // the parent venue (fine for a single scoped subcollection list)
+        // cannot satisfy for an open-ended collectionGroup query.
         allow get: if venueApproved(venueId) || isOwner(venueId) || isAdmin();
-        allow list: if venueApproved(venueId) || isOwner(venueId) || isAdmin();
+        allow list: if resource.data.venueApproved == true || isOwner(venueId) || isAdmin();
 
         allow create: if (isOwner(venueId) || isAdmin())
           && request.resource.data.id == productId
@@ -142,11 +150,13 @@ service cloud.firestore {
           && request.resource.data.price >= 0
           && request.resource.data.price <= 999
           && request.resource.data.available is bool
-          && request.resource.data.order is int;
+          && request.resource.data.order is int
+          && request.resource.data.venueApproved == venueApproved(venueId);
 
         allow update: if (isOwner(venueId) || isAdmin())
           && unchanged('id')
           && unchanged('code')
+          && (unchanged('venueApproved') || isAdmin())
           && (!('price' in request.resource.data)
               || (request.resource.data.price is number
                   && request.resource.data.price >= 0

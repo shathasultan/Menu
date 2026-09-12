@@ -7,8 +7,7 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { MainTabParamList, RootStackParamList } from '../../navigation/types';
 import { brandColors, brandFont } from '../../brand/theme';
 import { Mascot } from '../../brand/Mascot';
-import { VenueLogo } from '../../brand/VenueLogo';
-import { listenApprovedVenues } from '../../firebase/customerService';
+import { listenApprovedVenues, listenSearchableProducts, type SearchableProduct } from '../../firebase/customerService';
 import type { Venue } from '../../firebase/types';
 
 type Props = CompositeScreenProps<
@@ -16,21 +15,42 @@ type Props = CompositeScreenProps<
   NativeStackScreenProps<RootStackParamList>
 >;
 
+type ProductResult = { kind: 'product'; item: SearchableProduct; venueName: string };
+type VenueResult = { kind: 'venue'; item: Venue };
+type Result = ProductResult | VenueResult;
+
 export function SearchScreen({ navigation }: Props) {
   const [venues, setVenues] = useState<Venue[]>([]);
+  const [products, setProducts] = useState<SearchableProduct[]>([]);
   const [query, setQuery] = useState('');
 
   useEffect(() => listenApprovedVenues(setVenues), []);
+  useEffect(() => listenSearchableProducts(setProducts), []);
 
-  const results = useMemo(() => {
-    const q = query.trim().toLowerCase();
+  const venueById = useMemo(() => new Map(venues.map((v) => [v.id, v])), [venues]);
+
+  const results = useMemo<Result[] | null>(() => {
+    const q = query.trim();
     if (!q) return null;
-    return venues.filter(
-      (v) => v.name?.toLowerCase().includes(q) || v.type?.toLowerCase().includes(q)
-    );
-  }, [venues, query]);
+    const qLower = q.toLowerCase();
 
-  const suggestions = venues.slice(0, 4);
+    const productMatches: ProductResult[] = products
+      .filter(
+        (p) =>
+          p.code.toLowerCase().startsWith(qLower) ||
+          p.nameAr?.toLowerCase().includes(qLower) ||
+          p.nameEn?.toLowerCase().includes(qLower)
+      )
+      .map((p) => ({ kind: 'product' as const, item: p, venueName: venueById.get(p.venueId)?.name ?? '' }));
+
+    const venueMatches: VenueResult[] = venues
+      .filter((v) => v.name?.toLowerCase().includes(qLower) || v.type?.toLowerCase().includes(qLower))
+      .map((v) => ({ kind: 'venue' as const, item: v }));
+
+    return [...productMatches, ...venueMatches];
+  }, [products, venues, venueById, query]);
+
+  const suggestions = useMemo(() => products.slice(0, 4).map((p) => p.code), [products]);
 
   return (
     <View style={styles.screen}>
@@ -40,49 +60,70 @@ export function SearchScreen({ navigation }: Props) {
           <TextInput
             value={query}
             onChangeText={setQuery}
-            placeholder="اكتب اسم المطعم أو النوع"
+            placeholder="اكتب الرمز أو اسم المطعم"
             placeholderTextColor={brandColors.ink40}
             style={styles.input}
             autoFocus
+            autoCapitalize="characters"
           />
         </View>
         <Text style={styles.resultLine}>
-          {results === null ? 'اكتبي اسمًا أو اختاري من الاقتراحات' : `${results.length} نتيجة لـ«${query}»`}
+          {results === null ? 'اكتب الرمز أو الاسم، أو اختر من الاقتراحات' : `${results.length} نتيجة لـ «${query}»`}
         </Text>
       </View>
 
       <ScrollView contentContainerStyle={styles.content}>
         {results === null ? (
-          <>
-            <Text style={styles.sectionTitle}>اقتراحات</Text>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginTop: 10 }}>
-              {suggestions.map((v) => (
-                <Pressable key={v.id} onPress={() => setQuery(v.name)} style={styles.suggestionChip}>
-                  <Text style={styles.suggestionText}>{v.name}</Text>
-                </Pressable>
-              ))}
-            </ScrollView>
-          </>
+          suggestions.length > 0 && (
+            <>
+              <Text style={styles.sectionTitle}>اقتراحات</Text>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginTop: 10 }}>
+                {suggestions.map((code) => (
+                  <Pressable key={code} onPress={() => setQuery(code)} style={styles.suggestionChip}>
+                    <Text style={styles.suggestionText}>{code}</Text>
+                  </Pressable>
+                ))}
+              </ScrollView>
+            </>
+          )
         ) : results.length === 0 ? (
           <View style={styles.empty}>
             <Mascot variant="calm" size={86} />
-            <Text style={styles.emptyText}>لا توجد نتائج لهذا البحث.{'\n'}جرّبي اسم مطعم أو نوع نشاط مختلف.</Text>
+            <Text style={styles.emptyText}>
+              لا توجد نتائج لهذا الرمز.{'\n'}جرّب حرف التصنيف مع الرقم، مثل A02.
+            </Text>
           </View>
         ) : (
-          <View style={{ gap: 10 }}>
-            {results.map((v) => (
-              <Pressable
-                key={v.id}
-                onPress={() => navigation.navigate('VenueDetail', { venueId: v.id })}
-                style={styles.resultRow}
-              >
-                <VenueLogo name={v.name} seed={v.id} size={44} radius={14} />
-                <View style={{ flex: 1 }}>
-                  <Text style={styles.resultName}>{v.name}</Text>
-                  <Text style={styles.resultType}>{v.type}</Text>
-                </View>
-              </Pressable>
-            ))}
+          <View style={{ gap: 2 }}>
+            {results.map((r) =>
+              r.kind === 'product' ? (
+                <Pressable
+                  key={`p-${r.item.venueId}-${r.item.id}`}
+                  onPress={() => navigation.navigate('VenueDetail', { venueId: r.item.venueId })}
+                  style={styles.resultRow}
+                >
+                  <View style={styles.codeChip}>
+                    <Text style={styles.codeText}>{r.item.code}</Text>
+                  </View>
+                  <View style={{ flex: 1, minWidth: 0 }}>
+                    <Text style={styles.resultName} numberOfLines={1}>{r.item.nameAr}</Text>
+                    <Text style={styles.resultType} numberOfLines={1}>{r.venueName}</Text>
+                  </View>
+                  <Text style={styles.resultPrice}>{r.item.price} ر.س</Text>
+                </Pressable>
+              ) : (
+                <Pressable
+                  key={`v-${r.item.id}`}
+                  onPress={() => navigation.navigate('VenueDetail', { venueId: r.item.id })}
+                  style={styles.resultRow}
+                >
+                  <View style={{ flex: 1, minWidth: 0 }}>
+                    <Text style={styles.resultName} numberOfLines={1}>{r.item.name}</Text>
+                    <Text style={styles.resultType} numberOfLines={1}>{r.item.type}</Text>
+                  </View>
+                </Pressable>
+              )
+            )}
           </View>
         )}
       </ScrollView>
@@ -107,10 +148,13 @@ const styles = StyleSheet.create({
   content: { paddingHorizontal: 20, paddingBottom: 40 },
   sectionTitle: { fontFamily: brandFont.arBold, fontSize: 13, color: brandColors.ink55 },
   suggestionChip: { borderWidth: 1, borderColor: brandColors.border12, borderRadius: 999, paddingHorizontal: 14, paddingVertical: 9, marginLeft: 8 },
-  suggestionText: { fontFamily: brandFont.arBold, fontSize: 12.5, color: brandColors.text },
+  suggestionText: { fontFamily: brandFont.enExtraBold, fontSize: 12.5, color: brandColors.text, writingDirection: 'ltr' },
   empty: { alignItems: 'center', paddingVertical: 40, gap: 12 },
   emptyText: { fontFamily: brandFont.arRegular, fontSize: 13, color: brandColors.ink55, textAlign: 'center', lineHeight: 22 },
-  resultRow: { flexDirection: 'row', alignItems: 'center', gap: 12, borderBottomWidth: 1, borderBottomColor: brandColors.chip06, paddingVertical: 12 },
+  resultRow: { flexDirection: 'row', alignItems: 'center', gap: 12, borderBottomWidth: 1, borderBottomColor: brandColors.chip07, paddingVertical: 12 },
+  codeChip: { backgroundColor: brandColors.accent100, borderRadius: 999, paddingHorizontal: 10, paddingVertical: 5 },
+  codeText: { fontFamily: brandFont.enExtraBold, fontSize: 13, color: brandColors.accent800, writingDirection: 'ltr' },
   resultName: { fontFamily: brandFont.arBold, fontSize: 14, color: brandColors.text },
   resultType: { fontFamily: brandFont.arRegular, fontSize: 11.5, color: brandColors.ink55, marginTop: 2 },
+  resultPrice: { fontFamily: brandFont.enBold, fontSize: 13, color: brandColors.text, writingDirection: 'ltr' },
 });

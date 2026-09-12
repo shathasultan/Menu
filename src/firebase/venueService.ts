@@ -61,10 +61,11 @@ export interface AddProductInput {
 
 export async function addProduct(venueId: string, input: AddProductInput): Promise<string> {
   const catRef = doc(db, 'venues', venueId, 'categories', input.categoryId);
+  const venueRef = doc(db, 'venues', venueId);
   const prodRef = doc(collection(db, 'venues', venueId, 'products'));
   let code = '';
   await runTransaction(db, async (tx) => {
-    const catSnap = await tx.get(catRef);
+    const [catSnap, venueSnap] = await Promise.all([tx.get(catRef), tx.get(venueRef)]);
     if (!catSnap.exists()) throw new Error('التصنيف غير موجود');
     const cat = catSnap.data() as VenueCategory;
     const seq = cat.nextSeq ?? 1;
@@ -79,6 +80,7 @@ export async function addProduct(venueId: string, input: AddProductInput): Promi
       price: input.price,
       available: true,
       order: Date.now(),
+      venueApproved: venueSnap.exists() && venueSnap.data().status === 'approved',
     });
   });
   return code;
