@@ -18,7 +18,6 @@ export function MerchantAuthScreen({ navigation }: Props) {
   const [mode, setMode] = useState<Mode>('login');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -41,7 +40,6 @@ export function MerchantAuthScreen({ navigation }: Props) {
     if (!email.trim() || !email.includes('@')) return 'الرجاء إدخال بريد إلكتروني صحيح.';
     if (password.length < 8) return 'كلمة المرور قصيرة جدًا.';
     if (mode === 'signup' && !name.trim()) return 'الرجاء إدخال الاسم.';
-    if (mode === 'signup' && phone.trim().length < 9) return 'الرجاء إدخال رقم جوال صحيح.';
     return null;
   };
 
@@ -55,7 +53,7 @@ export function MerchantAuthScreen({ navigation }: Props) {
     setSubmitting(true);
     try {
       if (mode === 'signup') {
-        await signUpMerchant({ name: name.trim(), email: email.trim(), phone: phone.trim(), password });
+        await signUpMerchant({ name: name.trim(), email: email.trim(), password });
       } else {
         await signInMerchant(email.trim(), password);
       }
@@ -131,18 +129,6 @@ export function MerchantAuthScreen({ navigation }: Props) {
             style={[styles.input, styles.inputLtr]}
           />
         </Field>
-        {mode === 'signup' && (
-          <Field label="رقم الجوال">
-            <TextInput
-              value={phone}
-              onChangeText={setPhone}
-              placeholder="05xxxxxxxx"
-              placeholderTextColor={brandColors.ink40}
-              keyboardType="phone-pad"
-              style={[styles.input, styles.inputLtr]}
-            />
-          </Field>
-        )}
         <Field label="كلمة المرور">
           <TextInput
             value={password}

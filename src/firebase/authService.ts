@@ -14,7 +14,7 @@ import type { UserProfile, Venue } from './types';
 export interface SignUpInput {
   name: string;
   email: string;
-  phone: string;
+  phone?: string;
   password: string;
 }
 
