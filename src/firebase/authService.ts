@@ -44,6 +44,7 @@ async function ensureMerchantDocs(user: User, extra: { name: string; phone?: str
       phone: '',
       address: '',
       status: 'pending',
+      productIds: [],
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp(),
     });
@@ -101,6 +102,7 @@ export async function fetchOwnVenue(uid: string): Promise<Venue | null> {
     address: data.address,
     status: data.status,
     logoUrl: data.logoUrl,
+    productIds: data.productIds ?? [],
     createdAt: data.createdAt?.toMillis?.() ?? Date.now(),
     updatedAt: data.updatedAt?.toMillis?.() ?? Date.now(),
   };

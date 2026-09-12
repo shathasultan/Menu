@@ -1,4 +1,6 @@
 import {
+  arrayRemove,
+  arrayUnion,
   collection,
   doc,
   getDocs,
@@ -8,7 +10,6 @@ import {
   runTransaction,
   serverTimestamp,
   updateDoc,
-  deleteDoc,
   setDoc,
 } from 'firebase/firestore';
 import { db } from './config';
@@ -82,6 +83,7 @@ export async function addProduct(venueId: string, input: AddProductInput): Promi
       order: Date.now(),
       venueApproved: venueSnap.exists() && venueSnap.data().status === 'approved',
     });
+    tx.update(venueRef, { productIds: arrayUnion(prodRef.id), updatedAt: serverTimestamp() });
   });
   return code;
 }
@@ -94,8 +96,13 @@ export function updateProduct(
   return updateDoc(doc(db, 'venues', venueId, 'products', productId), patch);
 }
 
-export function deleteProduct(venueId: string, productId: string): Promise<void> {
-  return deleteDoc(doc(db, 'venues', venueId, 'products', productId));
+export async function deleteProduct(venueId: string, productId: string): Promise<void> {
+  const venueRef = doc(db, 'venues', venueId);
+  const prodRef = doc(db, 'venues', venueId, 'products', productId);
+  await runTransaction(db, async (tx) => {
+    tx.delete(prodRef);
+    tx.update(venueRef, { productIds: arrayRemove(productId), updatedAt: serverTimestamp() });
+  });
 }
 
 export function previewNextCode(category: VenueCategory | undefined): string {

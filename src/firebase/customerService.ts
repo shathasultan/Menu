@@ -16,6 +16,7 @@ function toVenue(id: string, data: any): Venue {
     address: data.address,
     status: data.status,
     logoUrl: data.logoUrl,
+    productIds: data.productIds ?? [],
     createdAt: data.createdAt?.toMillis?.() ?? 0,
     updatedAt: data.updatedAt?.toMillis?.() ?? 0,
   };

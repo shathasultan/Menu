@@ -9,8 +9,6 @@ import { useAuth } from '../../firebase/AuthContext';
 import { signOutUser } from '../../firebase/authService';
 import {
   fetchMerchantEmail,
-  listenTotalProductCount,
-  listenVenueProductCount,
   listenVenuesByStatus,
   setVenueStatus,
 } from '../../firebase/adminService';
@@ -23,12 +21,14 @@ export function AdminHomeScreen({ navigation }: Props) {
   const { profile } = useAuth();
   const [pending, setPending] = useState<Venue[]>([]);
   const [approved, setApproved] = useState<Venue[]>([]);
-  const [totalProducts, setTotalProducts] = useState(0);
   const [toast, setToast] = useState<string | null>(null);
 
   useEffect(() => listenVenuesByStatus('pending', setPending), []);
   useEffect(() => listenVenuesByStatus('approved', setApproved), []);
-  useEffect(() => listenTotalProductCount(setTotalProducts), []);
+
+  const totalProducts =
+    pending.reduce((sum, v) => sum + (v.productIds?.length ?? 0), 0) +
+    approved.reduce((sum, v) => sum + (v.productIds?.length ?? 0), 0);
 
   const showToast = (msg: string) => {
     setToast(msg);
@@ -120,10 +120,9 @@ export function AdminHomeScreen({ navigation }: Props) {
 }
 
 function PendingVenueCard({ venue, onApprove, onReject }: { venue: Venue; onApprove: () => void; onReject: () => void }) {
-  const [productCount, setProductCount] = useState(0);
+  const productCount = venue.productIds?.length ?? 0;
   const [email, setEmail] = useState('');
 
-  useEffect(() => listenVenueProductCount(venue.id, setProductCount), [venue.id]);
   useEffect(() => {
     fetchMerchantEmail(venue.ownerId).then(setEmail);
   }, [venue.ownerId]);

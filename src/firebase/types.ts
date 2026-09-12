@@ -21,6 +21,12 @@ export interface Venue {
   logoUrl?: string;
   createdAt: number;
   updatedAt: number;
+  /** IDs of every product under this venue, kept in sync by addProduct/
+   *  deleteProduct. Lets admin batch-update products by direct path
+   *  (setVenueStatus) without ever needing to list the subcollection —
+   *  a scoped list would work, but keeping this the one path avoids two
+   *  divergent code paths and doubles as the product-count stat. */
+  productIds: string[];
 }
 
 export interface VenueCategory {

@@ -137,8 +137,14 @@ service cloud.firestore {
         // prove directly from the query's own filter, which a get() on
         // the parent venue (fine for a single scoped subcollection list)
         // cannot satisfy for an open-ended collectionGroup query.
+        // `list` is intentionally NOT gated by isAdmin(): Firestore rejects
+        // an entire collectionGroup query's provability if ANY branch of
+        // the list rule touches get()/exists(), even when another branch
+        // already matches the query's own filter. Admin never needs to
+        // list this subcollection — it batch-updates products by direct
+        // path using venues/{venueId}.productIds (see setVenueStatus).
         allow get: if venueApproved(venueId) || isOwner(venueId) || isAdmin();
-        allow list: if resource.data.venueApproved == true || isOwner(venueId) || isAdmin();
+        allow list: if resource.data.venueApproved == true || isOwner(venueId);
 
         allow create: if (isOwner(venueId) || isAdmin())
           && request.resource.data.id == productId

@@ -1,26 +1,15 @@
 import {
   collection,
-  collectionGroup,
   doc,
   getDoc,
-  getDocs,
   onSnapshot,
   query,
   serverTimestamp,
-  updateDoc,
   where,
   writeBatch,
 } from 'firebase/firestore';
 import { db } from './config';
 import type { Venue, VenueStatus } from './types';
-
-export function listenTotalProductCount(cb: (count: number) => void): () => void {
-  return onSnapshot(collectionGroup(db, 'products'), (snap) => cb(snap.size));
-}
-
-export function listenVenueProductCount(venueId: string, cb: (count: number) => void): () => void {
-  return onSnapshot(collection(db, 'venues', venueId, 'products'), (snap) => cb(snap.size));
-}
 
 export async function fetchMerchantEmail(ownerId: string): Promise<string> {
   const snap = await getDoc(doc(db, 'users', ownerId));
@@ -42,6 +31,7 @@ export function listenVenuesByStatus(status: VenueStatus, cb: (venues: Venue[]) 
         address: data.address,
         status: data.status,
         logoUrl: data.logoUrl,
+        productIds: data.productIds ?? [],
         createdAt: data.createdAt?.toMillis?.() ?? 0,
         updatedAt: data.updatedAt?.toMillis?.() ?? 0,
       } as Venue;
@@ -55,12 +45,18 @@ export async function setVenueStatus(venueId: string, status: VenueStatus): Prom
   // Keep every product's denormalized `venueApproved` flag in sync with the
   // venue's own status in one atomic batch, so the cross-venue search index
   // (collectionGroup query) never observes a venue and its products
-  // disagreeing about approval.
-  const productsSnap = await getDocs(collection(db, 'venues', venueId, 'products'));
+  // disagreeing about approval. Targets each product by direct path (via
+  // the venue doc's own productIds) rather than listing the subcollection —
+  // admin isn't the owner, and the products `list` rule intentionally
+  // excludes admin (see firestore.rules) to keep the search query provable.
+  const venueRef = doc(db, 'venues', venueId);
+  const venueSnap = await getDoc(venueRef);
+  const productIds: string[] = venueSnap.exists() ? venueSnap.data().productIds ?? [] : [];
+
   const batch = writeBatch(db);
-  batch.update(doc(db, 'venues', venueId), { status, updatedAt: serverTimestamp() });
-  productsSnap.docs.forEach((d) => {
-    batch.update(d.ref, { venueApproved: status === 'approved' });
+  batch.update(venueRef, { status, updatedAt: serverTimestamp() });
+  productIds.forEach((id) => {
+    batch.update(doc(db, 'venues', venueId, 'products', id), { venueApproved: status === 'approved' });
   });
   await batch.commit();
 }
