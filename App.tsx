@@ -12,6 +12,18 @@ import {
   IBMPlexSansArabic_700Bold,
 } from '@expo-google-fonts/ibm-plex-sans-arabic';
 import { useFonts as useMonoFonts, IBMPlexMono_600SemiBold } from '@expo-google-fonts/ibm-plex-mono';
+import {
+  useFonts as useAlmaraiFonts,
+  Almarai_400Regular,
+  Almarai_700Bold,
+  Almarai_800ExtraBold,
+} from '@expo-google-fonts/almarai';
+import {
+  useFonts as useFigtreeFonts,
+  Figtree_400Regular,
+  Figtree_700Bold,
+  Figtree_800ExtraBold,
+} from '@expo-google-fonts/figtree';
 import { colors } from './src/theme';
 import { DataProvider } from './src/data/DataContext';
 import { AuthProvider } from './src/firebase/AuthContext';
@@ -34,8 +46,10 @@ export default function App() {
     IBMPlexSansArabic_700Bold,
   });
   const [monoLoaded] = useMonoFonts({ IBMPlexMono_600SemiBold });
+  const [almaraiLoaded] = useAlmaraiFonts({ Almarai_400Regular, Almarai_700Bold, Almarai_800ExtraBold });
+  const [figtreeLoaded] = useFigtreeFonts({ Figtree_400Regular, Figtree_700Bold, Figtree_800ExtraBold });
 
-  const ready = sansLoaded && monoLoaded;
+  const ready = sansLoaded && monoLoaded && almaraiLoaded && figtreeLoaded;
 
   useEffect(() => {
     if (ready) {

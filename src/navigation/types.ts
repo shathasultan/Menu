@@ -4,6 +4,10 @@ export type RootStackParamList = {
   Restaurant: { slug: string };
   OwnerLogin: undefined;
   OwnerDashboard: { slug: string };
+  MerchantAuth: undefined;
+  OwnerHome: undefined;
+  AdminLogin: undefined;
+  AdminHome: undefined;
 };
 
 export type MainTabParamList = {

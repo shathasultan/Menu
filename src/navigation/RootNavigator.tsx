@@ -13,13 +13,17 @@ import { FavoritesScreen } from '../screens/customer/FavoritesScreen';
 import { RestaurantScreen } from '../screens/customer/RestaurantScreen';
 import { OwnerLoginScreen } from '../screens/owner/OwnerLoginScreen';
 import { DashboardScreen } from '../screens/owner/DashboardScreen';
+import { MerchantAuthScreen } from '../screens/merchant/MerchantAuthScreen';
+import { OwnerHomeScreen } from '../screens/merchant/OwnerHomeScreen';
+import { AdminLoginScreen } from '../screens/admin/AdminLoginScreen';
+import { AdminHomeScreen } from '../screens/admin/AdminHomeScreen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tabs = createBottomTabNavigator<MainTabParamList>();
 
 type MainProps = NativeStackScreenProps<RootStackParamList, 'Main'>;
 
-function TopBar({ onOwnerPress }: { onOwnerPress: () => void }) {
+function TopBar({ onOwnerPress, onAdminPress }: { onOwnerPress: () => void; onAdminPress: () => void }) {
   return (
     <View style={styles.topBar}>
       <View style={styles.brandRow}>
@@ -28,9 +32,14 @@ function TopBar({ onOwnerPress }: { onOwnerPress: () => void }) {
           <Text style={styles.tagText}>نموذج أولي</Text>
         </View>
       </View>
-      <Pressable onPress={onOwnerPress} style={styles.ownerLink}>
-        <Text style={styles.ownerLinkText}>لوحة صاحب المطعم</Text>
-      </Pressable>
+      <View style={styles.topLinks}>
+        <Pressable onPress={onAdminPress} hitSlop={8}>
+          <Text style={styles.adminLinkText}>دخول الإدارة</Text>
+        </Pressable>
+        <Pressable onPress={onOwnerPress} style={styles.ownerLink}>
+          <Text style={styles.ownerLinkText}>لوحة صاحب المطعم</Text>
+        </Pressable>
+      </View>
     </View>
   );
 }
@@ -38,7 +47,10 @@ function TopBar({ onOwnerPress }: { onOwnerPress: () => void }) {
 function MainTabs({ navigation }: MainProps) {
   return (
     <View style={{ flex: 1, backgroundColor: colors.bg }}>
-      <TopBar onOwnerPress={() => navigation.navigate('OwnerLogin')} />
+      <TopBar
+        onOwnerPress={() => navigation.navigate('MerchantAuth')}
+        onAdminPress={() => navigation.navigate('AdminLogin')}
+      />
       <Tabs.Navigator
         screenOptions={{
           headerShown: false,
@@ -89,6 +101,10 @@ export function RootNavigator() {
           component={DashboardScreen}
           options={{ headerShown: false }}
         />
+        <Stack.Screen name="MerchantAuth" component={MerchantAuthScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="OwnerHome" component={OwnerHomeScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="AdminLogin" component={AdminLoginScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="AdminHome" component={AdminHomeScreen} options={{ headerShown: false }} />
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -114,6 +130,8 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
   },
   tagText: { fontFamily: fontFamily.arabic, fontSize: 10.5, color: colors.inkSoft },
+  topLinks: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  adminLinkText: { fontFamily: fontFamily.arabic, fontSize: 11.5, color: colors.inkFaint },
   ownerLink: {
     borderWidth: 1,
     borderColor: colors.line,
