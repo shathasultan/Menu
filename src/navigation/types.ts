@@ -1,5 +1,8 @@
 // bt:ec52ad88d4b0903b
 export type RootStackParamList = {
+  Splash: undefined;
+  Welcome: undefined;
+  Role: undefined;
   Main: undefined;
   Restaurant: { slug: string };
   OwnerLogin: undefined;

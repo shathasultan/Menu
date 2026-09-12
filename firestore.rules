@@ -62,8 +62,11 @@ service cloud.firestore {
     // merchant's uid, which is what structurally caps accounts at one store.
     // ---------------------------------------------------------------------
     match /venues/{venueId} {
-      allow get: if resource.data.status == 'approved' || isOwner(venueId) || isAdmin();
-      allow list: if false;
+      // `read` (not `get`) so admin's status-filtered list queries and the
+      // customer "approved venues" browse query are both provably allowed —
+      // Firestore requires list queries to match a rule branch that doesn't
+      // depend on data outside the query's own filters.
+      allow read: if resource.data.status == 'approved' || isOwner(venueId) || isAdmin();
 
       allow create: if isOwner(venueId)
         && request.resource.data.id == venueId

@@ -17,6 +17,9 @@ import { MerchantAuthScreen } from '../screens/merchant/MerchantAuthScreen';
 import { OwnerDashboardScreen } from '../screens/merchant/OwnerDashboardScreen';
 import { AdminLoginScreen } from '../screens/admin/AdminLoginScreen';
 import { AdminHomeScreen } from '../screens/admin/AdminHomeScreen';
+import { SplashScreen } from '../screens/brand/SplashScreen';
+import { WelcomeScreen } from '../screens/brand/WelcomeScreen';
+import { RoleScreen } from '../screens/brand/RoleScreen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tabs = createBottomTabNavigator<MainTabParamList>();
@@ -84,7 +87,10 @@ function MainTabs({ navigation }: MainProps) {
 export function RootNavigator() {
   return (
     <NavigationContainer>
-      <Stack.Navigator screenOptions={{ headerShown: true, headerBackTitle: '' }}>
+      <Stack.Navigator initialRouteName="Splash" screenOptions={{ headerShown: true, headerBackTitle: '' }}>
+        <Stack.Screen name="Splash" component={SplashScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="Welcome" component={WelcomeScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="Role" component={RoleScreen} options={{ headerShown: false }} />
         <Stack.Screen name="Main" component={MainTabs} options={{ headerShown: false }} />
         <Stack.Screen
           name="Restaurant"
