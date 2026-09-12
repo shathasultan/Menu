@@ -100,22 +100,21 @@ export function VenueDetailScreen({ route }: Props) {
             </ScrollView>
 
             <View style={{ marginTop: 6 }}>
-              {filteredProducts
-                .filter((p) => p.available)
-                .map((p, i, arr) => (
-                  <Pressable
-                    key={p.id}
-                    onPress={() => setDetailProduct(p)}
-                    style={[styles.row, i === arr.length - 1 && styles.rowLast]}
-                  >
-                    <Text style={styles.rowCode}>{p.code}</Text>
-                    <View style={{ flex: 1, minWidth: 0 }}>
-                      <Text style={styles.rowName} numberOfLines={1}>{p.nameAr}</Text>
-                      {!!p.nameEn && <Text style={styles.rowNameEn} numberOfLines={1}>{p.nameEn}</Text>}
-                    </View>
-                    <Text style={styles.rowPrice}>{p.price} ر.س</Text>
-                  </Pressable>
-                ))}
+              {filteredProducts.map((p, i, arr) => (
+                <Pressable
+                  key={p.id}
+                  onPress={() => setDetailProduct(p)}
+                  style={[styles.row, i === arr.length - 1 && styles.rowLast, !p.available && styles.rowOut]}
+                >
+                  <Text style={styles.rowCode}>{p.code}</Text>
+                  <View style={styles.rowThumb} />
+                  <View style={{ flex: 1, minWidth: 0 }}>
+                    <Text style={styles.rowName} numberOfLines={1}>{p.nameAr}</Text>
+                    {!!p.nameEn && <Text style={styles.rowNameEn} numberOfLines={1}>{p.nameEn}</Text>}
+                  </View>
+                  <Text style={styles.rowPrice}>{p.price} ر.س</Text>
+                </Pressable>
+              ))}
             </View>
           </>
         )}
@@ -161,9 +160,19 @@ const styles = StyleSheet.create({
   catTabActive: { backgroundColor: brandColors.text, borderColor: brandColors.text },
   catTabText: { fontFamily: brandFont.arBold, fontSize: 12.5, color: brandColors.ink55 },
   catTabTextActive: { color: '#fff' },
-  row: { flexDirection: 'row', alignItems: 'center', gap: 13, paddingVertical: 13, borderBottomWidth: 1, borderBottomColor: brandColors.chip06 },
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 13,
+    paddingVertical: 13,
+    paddingHorizontal: 4,
+    borderBottomWidth: 1,
+    borderBottomColor: brandColors.chip07,
+  },
   rowLast: { borderBottomWidth: 0 },
-  rowCode: { fontFamily: brandFont.enExtraBold, fontSize: 24, color: brandColors.accent, writingDirection: 'ltr', minWidth: 52 },
+  rowOut: { opacity: 0.45 },
+  rowCode: { fontFamily: brandFont.enExtraBold, fontSize: 26, color: brandColors.accent, writingDirection: 'ltr', minWidth: 52 },
+  rowThumb: { width: 40, height: 40, borderRadius: 12, backgroundColor: brandColors.chip06 },
   rowName: { fontFamily: brandFont.arExtraBold, fontSize: 14, color: brandColors.text },
   rowNameEn: { fontFamily: brandFont.enRegular, fontSize: 10.5, color: brandColors.ink42, writingDirection: 'ltr', marginTop: 1 },
   rowPrice: { fontFamily: brandFont.enBold, fontSize: 14, color: brandColors.text, writingDirection: 'ltr' },

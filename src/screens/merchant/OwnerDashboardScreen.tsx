@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -16,20 +16,28 @@ type Props = NativeStackScreenProps<RootStackParamList, 'OwnerHome'>;
 type TabKey = 'menu' | 'venue' | 'account';
 
 const TABS: { key: TabKey; label: string; icon: keyof typeof Ionicons.glyphMap }[] = [
-  { key: 'menu', label: 'المنيو', icon: 'reader-outline' },
+  { key: 'menu', label: 'المنيو', icon: 'menu-outline' },
   { key: 'venue', label: 'مطعمي', icon: 'briefcase-outline' },
   { key: 'account', label: 'حسابي', icon: 'person-circle-outline' },
 ];
 
-export function OwnerDashboardScreen({ navigation }: Props) {
+export function OwnerDashboardScreen({ route, navigation }: Props) {
   const { profile, venue, loading, refreshVenue } = useAuth();
   const [tab, setTab] = useState<TabKey>('menu');
   const [toast, setToast] = useState<string | null>(null);
+  const welcomedRef = useRef(false);
 
   const showToast = (msg: string) => {
     setToast(msg);
     setTimeout(() => setToast(null), 2200);
   };
+
+  useEffect(() => {
+    if (route.params?.justSignedIn && profile && !welcomedRef.current) {
+      welcomedRef.current = true;
+      showToast(`أهلًا ${profile.name}`);
+    }
+  }, [route.params?.justSignedIn, profile]);
 
   if (loading) {
     return (
@@ -122,7 +130,8 @@ const styles = StyleSheet.create({
     gap: 10,
     backgroundColor: '#fff',
     borderRadius: 20,
-    padding: 14,
+    paddingHorizontal: 15,
+    paddingVertical: 12,
     marginHorizontal: 20,
     marginTop: -8,
     ...brandShadow.card,
@@ -135,15 +144,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  pendingText: { flex: 1, fontFamily: brandFont.arRegular, fontSize: 11.5, color: brandColors.ink55, lineHeight: 18, marginTop: 4 },
+  pendingText: { flex: 1, fontFamily: brandFont.arRegular, fontSize: 11.5, color: brandColors.ink65, lineHeight: 18, marginTop: 4 },
   body: { flex: 1 },
   tabBar: {
     flexDirection: 'row',
     borderTopWidth: 1,
-    borderTopColor: brandColors.border09,
+    borderTopColor: brandColors.border08,
     backgroundColor: '#fff',
     paddingTop: 10,
-    paddingBottom: 10,
+    paddingHorizontal: 8,
   },
   tabBtn: { flex: 1, alignItems: 'center', gap: 4 },
   tabLabel: { fontFamily: brandFont.arBold, fontSize: 10.5, color: brandColors.ink40 },

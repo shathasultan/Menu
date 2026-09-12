@@ -66,7 +66,7 @@ export function RoleScreen({ navigation }: Props) {
 }
 
 const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: '#fff', padding: 22, paddingTop: 74, overflow: 'hidden' },
+  screen: { flex: 1, backgroundColor: '#fff', paddingHorizontal: 22, paddingTop: 74, paddingBottom: 30, overflow: 'hidden' },
   decor: { position: 'absolute', top: -110, left: -80, width: 240, height: 240, borderRadius: 999, backgroundColor: brandColors.accent100 },
   wordmark: { fontFamily: brandFont.enExtraBold, fontSize: 26, color: brandColors.text, writingDirection: 'ltr' },
   title: { fontFamily: brandFont.arExtraBold, fontSize: 27, color: brandColors.text, marginTop: 18, marginBottom: 6, lineHeight: 36 },
@@ -80,10 +80,9 @@ const styles = StyleSheet.create({
     borderRadius: 28,
     backgroundColor: '#fff',
     borderWidth: 1.5,
-    ...brandShadow.card,
   },
-  cardCustomer: { borderColor: brandColors.accent300 },
-  cardMerchant: { borderColor: brandColors.sage300 },
+  cardCustomer: { borderColor: brandColors.accent300, ...brandShadow.roleCardAccent },
+  cardMerchant: { borderColor: brandColors.sage300, ...brandShadow.roleCardSage },
   cardPressed: { opacity: 0.92 },
   cardTitle: { fontFamily: brandFont.arExtraBold, fontSize: 19, color: brandColors.text },
   cardSub: { fontFamily: brandFont.arRegular, fontSize: 12.5, color: brandColors.ink55, marginTop: 4, lineHeight: 19 },

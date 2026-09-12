@@ -39,6 +39,11 @@ export function VenueTab({ venue, onSaved }: { venue: Venue; onSaved: () => void
       <Text style={styles.heading}>بيانات المتجر</Text>
       <Text style={styles.sub}>متجر واحد لكل حساب. يظهر الشعار للعملاء في الصفحة الرئيسية وأعلى القائمة.</Text>
 
+      <View style={styles.logoRow}>
+        <View style={styles.logoSlot} />
+        <Text style={styles.logoHelp}>اسحب الشعار هنا أو اضغط للاختيار. يفضّل استخدام صورة مربعة وواضحة.</Text>
+      </View>
+
       <View style={styles.fields}>
         <Field label="اسم المتجر">
           <TextInput value={name} onChangeText={setName} style={styles.input} placeholder="مثال: كشك السنابل" placeholderTextColor={brandColors.ink40} />
@@ -72,22 +77,25 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 
 const styles = StyleSheet.create({
   content: { padding: 20, paddingBottom: 40 },
-  statusCard: { borderRadius: 22, padding: 16, marginBottom: 18, ...brandShadow.card },
+  statusCard: { borderRadius: 22, paddingHorizontal: 17, paddingVertical: 15, marginBottom: 18, ...brandShadow.card },
   statusPending: { backgroundColor: brandColors.accent100 },
   statusApproved: { backgroundColor: brandColors.sage100 },
   statusTitle: { fontFamily: brandFont.arExtraBold, fontSize: 14.5 },
   statusNote: { fontFamily: brandFont.arRegular, fontSize: 12, color: brandColors.ink55, marginTop: 4, lineHeight: 18 },
   heading: { fontFamily: brandFont.arExtraBold, fontSize: 16, color: brandColors.text },
   sub: { fontFamily: brandFont.arRegular, fontSize: 12.5, color: brandColors.ink55, marginTop: 4, marginBottom: 18, lineHeight: 19 },
+  logoRow: { flexDirection: 'row', alignItems: 'center', gap: 14, marginBottom: 22 },
+  logoSlot: { width: 96, height: 96, borderRadius: 26, backgroundColor: brandColors.sage100 },
+  logoHelp: { flex: 1, fontFamily: brandFont.arRegular, fontSize: 12, color: brandColors.ink55, lineHeight: 19 },
   fields: { marginBottom: 18 },
   label: { fontFamily: brandFont.arBold, fontSize: 11.5, color: brandColors.ink50, marginBottom: 5, marginHorizontal: 4 },
   input: {
     borderWidth: 1,
     borderColor: brandColors.border12,
     backgroundColor: '#fff',
-    borderRadius: 16,
-    paddingHorizontal: 14,
-    paddingVertical: 12,
+    borderRadius: 999,
+    paddingHorizontal: 17,
+    paddingVertical: 13,
     fontFamily: brandFont.arRegular,
     fontSize: 14,
     color: brandColors.text,

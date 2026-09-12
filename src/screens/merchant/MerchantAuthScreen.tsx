@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -8,6 +8,7 @@ import { Mascot } from '../../brand/Mascot';
 import { GoogleGlyph } from '../../brand/GoogleGlyph';
 import { signInMerchant, signUpMerchant } from '../../firebase/authService';
 import { useGoogleAuth } from '../../firebase/useGoogleAuth';
+import { useAuth } from '../../firebase/AuthContext';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'MerchantAuth'>;
 
@@ -23,6 +24,18 @@ export function MerchantAuthScreen({ navigation }: Props) {
   const [submitting, setSubmitting] = useState(false);
 
   const google = useGoogleAuth();
+  const { firebaseUser } = useAuth();
+  const navigatedRef = useRef(false);
+
+  // Covers both the email/password path (signUpMerchant/signInMerchant below)
+  // and the Google path (useGoogleAuth signs in internally with no callback) —
+  // one place navigates onward the moment a session exists.
+  useEffect(() => {
+    if (firebaseUser && !navigatedRef.current) {
+      navigatedRef.current = true;
+      navigation.replace('OwnerHome', { justSignedIn: true });
+    }
+  }, [firebaseUser, navigation]);
 
   const validate = (): string | null => {
     if (!email.trim() || !email.includes('@')) return 'الرجاء إدخال بريد إلكتروني صحيح.';
@@ -46,7 +59,9 @@ export function MerchantAuthScreen({ navigation }: Props) {
       } else {
         await signInMerchant(email.trim(), password);
       }
-      navigation.replace('OwnerHome');
+      setPassword('');
+      // Navigation happens in the firebaseUser effect above once the auth
+      // state listener picks up the new session.
     } catch (e: any) {
       setError(mapAuthError(e?.code));
     } finally {
@@ -238,7 +253,14 @@ const styles = StyleSheet.create({
     marginBottom: 18,
   },
   segmentOpt: { flex: 1, paddingVertical: 9, borderRadius: 999, alignItems: 'center' },
-  segmentOptActive: { backgroundColor: '#fff' },
+  segmentOptActive: {
+    backgroundColor: '#fff',
+    shadowColor: '#201E1D',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 1,
+  },
   segmentText: { fontFamily: brandFont.arBold, fontSize: 13, color: brandColors.ink50 },
   segmentTextActive: { color: brandColors.text },
   fields: { gap: 10, marginBottom: 14 },

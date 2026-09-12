@@ -6,7 +6,7 @@ export type RootStackParamList = {
   Main: undefined;
   VenueDetail: { venueId: string };
   MerchantAuth: undefined;
-  OwnerHome: undefined;
+  OwnerHome: { justSignedIn?: boolean } | undefined;
   AdminLogin: undefined;
   AdminHome: undefined;
 };

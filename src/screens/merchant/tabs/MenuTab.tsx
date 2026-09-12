@@ -135,10 +135,10 @@ export function MenuTab({ venueId, onToast }: { venueId: string; onToast: (msg: 
                     </View>
                     <View style={styles.productRow2}>
                       <Text style={styles.priceLabel}>السعر</Text>
-                      <Text style={styles.priceValue}>{p.price} ر.س</Text>
+                      <PriceEditor venueId={venueId} product={p} />
                       <View style={{ flex: 1 }} />
                       <View style={[styles.stateTag, p.available ? styles.stateTagOn : styles.stateTagOff]}>
-                        <Text style={[styles.stateTagText, { color: p.available ? brandColors.sage800 : brandColors.ink50 }]}>
+                        <Text style={[styles.stateTagText, { color: p.available ? brandColors.sage800 : brandColors.ink55 }]}>
                           {p.available ? 'متوفر' : 'نفذت الكمية'}
                         </Text>
                       </View>
@@ -186,6 +186,34 @@ export function MenuTab({ venueId, onToast }: { venueId: string; onToast: (msg: 
   );
 }
 
+function PriceEditor({ venueId, product }: { venueId: string; product: VenueProduct }) {
+  const [text, setText] = useState(String(product.price));
+
+  useEffect(() => setText(String(product.price)), [product.price]);
+
+  const commit = () => {
+    const digits = text.replace(/[^0-9]/g, '');
+    const clamped = Math.max(0, Math.min(999, Number(digits) || 0));
+    setText(String(clamped));
+    if (clamped !== product.price) {
+      updateProduct(venueId, product.id, { price: clamped });
+    }
+  };
+
+  return (
+    <View style={styles.priceInputWrap}>
+      <TextInput
+        value={text}
+        onChangeText={(v) => setText(v.replace(/[^0-9]/g, ''))}
+        onEndEditing={commit}
+        keyboardType="number-pad"
+        style={styles.priceInput}
+      />
+      <Text style={styles.priceUnit}>ر.س</Text>
+    </View>
+  );
+}
+
 const styles = StyleSheet.create({
   screen: { flex: 1 },
   content: { padding: 20, paddingBottom: 40 },
@@ -199,15 +227,15 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderWidth: 1,
     borderColor: brandColors.border12,
-    borderRadius: 16,
-    paddingHorizontal: 14,
+    borderRadius: 999,
+    paddingHorizontal: 17,
     paddingVertical: 11,
     fontFamily: brandFont.arRegular,
     fontSize: 13.5,
     color: brandColors.text,
     textAlign: 'right',
   },
-  addCatBtn: { width: 42, height: 42, borderRadius: 16, backgroundColor: brandColors.accent, alignItems: 'center', justifyContent: 'center' },
+  addCatBtn: { width: 42, height: 42, borderRadius: 999, backgroundColor: brandColors.accent, alignItems: 'center', justifyContent: 'center' },
   empty: { paddingVertical: 24, alignItems: 'center' },
   emptyTitle: { fontFamily: brandFont.arBold, fontSize: 14, color: brandColors.ink55 },
   emptyText: { fontFamily: brandFont.arRegular, fontSize: 12.5, color: brandColors.ink40, marginTop: 4, textAlign: 'center' },
@@ -232,18 +260,26 @@ const styles = StyleSheet.create({
     gap: 5,
     backgroundColor: brandColors.accent,
     borderRadius: 999,
-    paddingHorizontal: 13,
-    paddingVertical: 8,
+    paddingHorizontal: 15,
+    paddingVertical: 9,
   },
-  addProductText: { fontFamily: brandFont.arBold, fontSize: 12, color: '#fff' },
-  productCard: { backgroundColor: '#fff', borderWidth: 1, borderColor: brandColors.border09, borderRadius: 22, padding: 14, ...brandShadow.card },
-  productCardDim: { opacity: 0.65 },
+  addProductText: { fontFamily: brandFont.arBold, fontSize: 12.5, color: '#fff' },
+  productCard: {
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: brandColors.border09,
+    borderRadius: 22,
+    paddingHorizontal: 15,
+    paddingVertical: 14,
+    ...brandShadow.card,
+  },
+  productCardDim: { opacity: 0.7 },
   productRow1: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   imgSlot: { width: 40, height: 40, borderRadius: 12, backgroundColor: brandColors.chip06 },
   codeChip: { backgroundColor: brandColors.accent100, borderRadius: 8, paddingHorizontal: 8, paddingVertical: 4 },
   codeChipText: { fontFamily: brandFont.enExtraBold, fontSize: 13, color: brandColors.accent800, writingDirection: 'ltr' },
-  productName: { fontFamily: brandFont.arBold, fontSize: 14, color: brandColors.text },
-  productNameEn: { fontFamily: brandFont.enRegular, fontSize: 10.5, color: brandColors.ink42, writingDirection: 'ltr', marginTop: 1 },
+  productName: { fontFamily: brandFont.arExtraBold, fontSize: 14, lineHeight: 18, color: brandColors.text },
+  productNameEn: { fontFamily: brandFont.enRegular, fontSize: 10.5, color: brandColors.ink45, writingDirection: 'ltr', marginTop: 1 },
   toggle: { width: 40, height: 24, borderRadius: 999, backgroundColor: brandColors.chip06, padding: 3, justifyContent: 'center' },
   toggleOn: { backgroundColor: brandColors.sage },
   knob: { width: 18, height: 18, borderRadius: 999, backgroundColor: '#fff', alignSelf: 'flex-end' },
@@ -254,15 +290,34 @@ const styles = StyleSheet.create({
     marginTop: 10,
     paddingTop: 10,
     borderTopWidth: 1,
-    borderTopColor: brandColors.chip06,
+    borderTopColor: brandColors.border08,
     gap: 6,
   },
   priceLabel: { fontFamily: brandFont.arRegular, fontSize: 11.5, color: brandColors.ink50 },
-  priceValue: { fontFamily: brandFont.enBold, fontSize: 14, color: brandColors.text, writingDirection: 'ltr' },
+  priceInputWrap: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    borderWidth: 1,
+    borderColor: brandColors.border12,
+    borderRadius: 999,
+    paddingHorizontal: 12,
+    paddingVertical: 5,
+  },
+  priceInput: {
+    width: 46,
+    padding: 0,
+    fontFamily: brandFont.enBold,
+    fontSize: 15,
+    color: brandColors.text,
+    textAlign: 'center',
+    writingDirection: 'ltr',
+  },
+  priceUnit: { fontFamily: brandFont.arRegular, fontSize: 11.5, color: brandColors.ink50 },
   stateTag: { borderRadius: 999, paddingHorizontal: 9, paddingVertical: 4 },
   stateTagOn: { backgroundColor: brandColors.sage100 },
-  stateTagOff: { backgroundColor: brandColors.chip06 },
+  stateTagOff: { backgroundColor: brandColors.chip07 },
   stateTagText: { fontFamily: brandFont.arBold, fontSize: 10 },
-  explainer: { backgroundColor: brandColors.accent100, borderRadius: 22, padding: 16, marginTop: 20 },
+  explainer: { backgroundColor: brandColors.accent100, borderRadius: 22, paddingHorizontal: 17, paddingVertical: 15, marginTop: 20 },
   explainerText: { fontFamily: brandFont.arRegular, fontSize: 12.5, color: brandColors.accent900, lineHeight: 20 },
 });

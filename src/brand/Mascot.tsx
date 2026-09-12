@@ -1,19 +1,41 @@
 import React from 'react';
-import Svg, { Path, Ellipse, Circle, Rect, Text as SvgText } from 'react-native-svg';
+import Svg, { Path, Ellipse, Circle, Rect, Text as SvgText, G } from 'react-native-svg';
 import { brandColors } from './theme';
 
 type Variant = 'default' | 'calm' | 'apron';
 
+// Verbatim geometry from the design's <symbol id="mn-mascot" | "mn-mascot-calm" | "mn-mascot-apron">
+// (native viewBox 0 0 120 142). CSS keyframe animations (steam drift, wave, blink, bob) are not
+// reproduced — the shapes are rendered in their rest pose.
+// `size` is the rendered WIDTH (matching how the design spec lists mascot sizes, e.g. "70×83"),
+// height follows the native 120:142 aspect ratio.
 export function Mascot({ variant = 'calm', size = 76 }: { variant?: Variant; size?: number }) {
   const isApron = variant === 'apron';
+  const isDefault = variant === 'default';
   const domeFill = isApron ? brandColors.sage : brandColors.accent;
   const domeShadeFill = isApron ? brandColors.sage600 : brandColors.accent600;
   const bodyStroke = isApron ? brandColors.sage300 : brandColors.accent300;
   const collarFill = isApron ? brandColors.sage200 : brandColors.accent200;
-  const width = (size * 120) / 142;
+  const height = (size * 142) / 120;
 
   return (
-    <Svg width={width} height={size} viewBox="0 0 120 142">
+    <Svg width={size} height={height} viewBox="0 0 120 142">
+      {isDefault && (
+        <G>
+          <Path d="M47 16q7-6 0-13" fill="none" stroke={brandColors.sage500} strokeWidth={4.5} strokeLinecap="round" />
+          <Path d="M64 18q8-7 0-15" fill="none" stroke={brandColors.sage400} strokeWidth={4.5} strokeLinecap="round" />
+        </G>
+      )}
+      {isDefault && (
+        <Path d="M20 74q-13 5-10 20" fill="none" stroke={brandColors.accent700} strokeWidth={7} strokeLinecap="round" />
+      )}
+      {isDefault && (
+        <G>
+          <Path d="M96 70q15-5 16-19" fill="none" stroke={brandColors.accent700} strokeWidth={7} strokeLinecap="round" />
+          <Circle cx={112} cy={48} r={6} fill={brandColors.accent700} />
+        </G>
+      )}
+
       <Ellipse cx={60} cy={34} rx={40} ry={10} fill={domeFill} />
       <Ellipse cx={60} cy={27} rx={27} ry={7.5} fill={domeShadeFill} />
       <Path
@@ -22,7 +44,7 @@ export function Mascot({ variant = 'calm', size = 76 }: { variant?: Variant; siz
         stroke={bodyStroke}
         strokeWidth={2.5}
       />
-      {variant === 'default' && (
+      {isDefault && (
         <>
           <Circle cx={41} cy={72} r={5.5} fill={brandColors.accent300} opacity={0.75} />
           <Circle cx={79} cy={72} r={5.5} fill={brandColors.accent300} opacity={0.75} />
@@ -48,6 +70,7 @@ export function Mascot({ variant = 'calm', size = 76 }: { variant?: Variant; siz
           fontSize={14}
           fontWeight="800"
           fontFamily="Figtree_800ExtraBold"
+          letterSpacing={1.5}
         >
           A01
         </SvgText>

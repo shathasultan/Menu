@@ -35,7 +35,9 @@ service cloud.firestore {
     // admin promotion happens out-of-band directly in the console.
     // ---------------------------------------------------------------------
     match /users/{uid} {
-      allow get: if isSignedIn() && request.auth.uid == uid;
+      // Admin can read a merchant's profile (name/email) to show on the
+      // moderation cards; still not listable in bulk.
+      allow get: if isSignedIn() && (request.auth.uid == uid || isAdmin());
       allow list: if false;
 
       allow create: if isSignedIn()

@@ -91,7 +91,7 @@ export function AdminLoginScreen({ navigation }: Props) {
 }
 
 const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: brandColors.adminBg, padding: 22, paddingTop: 60 },
+  screen: { flex: 1, backgroundColor: brandColors.adminBg, paddingHorizontal: 22, paddingTop: 60, paddingBottom: 34 },
   decorCircle: {
     position: 'absolute',
     bottom: -90,
@@ -106,7 +106,7 @@ const styles = StyleSheet.create({
     height: 38,
     borderRadius: 999,
     borderWidth: 1,
-    borderColor: brandColors.white18,
+    borderColor: brandColors.white20,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 22,
@@ -114,7 +114,7 @@ const styles = StyleSheet.create({
   brandRow: { flexDirection: 'row', alignItems: 'baseline', gap: 8, marginBottom: 22 },
   wordmark: { fontFamily: brandFont.enExtraBold, fontSize: 26, color: '#fff' },
   brandSub: { fontFamily: brandFont.arBold, fontSize: 12, color: brandColors.white60 },
-  title: { fontFamily: brandFont.arExtraBold, fontSize: 25, color: '#fff', marginBottom: 8 },
+  title: { fontFamily: brandFont.arExtraBold, fontSize: 25, lineHeight: 34, color: '#fff', marginBottom: 8 },
   subtitle: { fontFamily: brandFont.arRegular, fontSize: 12.5, color: brandColors.white55, lineHeight: 20, marginBottom: 26 },
   fields: { gap: 10, marginBottom: 12 },
   input: {
