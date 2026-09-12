@@ -1,17 +1,15 @@
-// bt:ec52ad88d4b0903b
-import React, { useMemo, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import React, { useEffect, useMemo, useState } from 'react';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import type { CompositeScreenProps } from '@react-navigation/native';
 import type { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { MainTabParamList, RootStackParamList } from '../../navigation/types';
-import { useData } from '../../data/DataContext';
-import { searchAll } from '../../data/repo';
-import { colors, fontFamily, radius, shadow, spacing } from '../../theme';
-import { RestaurantCard } from '../../components/RestaurantCard';
-import { CodeChip } from '../../components/CodeChip';
-import { formatPrice } from '../../utils/format';
+import { brandColors, brandFont, brandShadow } from '../../brand/theme';
+import { Mascot } from '../../brand/Mascot';
+import { VenueLogo } from '../../brand/VenueLogo';
+import { listenApprovedVenues } from '../../firebase/customerService';
+import type { Venue } from '../../firebase/types';
 
 type Props = CompositeScreenProps<
   BottomTabScreenProps<MainTabParamList, 'Home'>,
@@ -19,164 +17,131 @@ type Props = CompositeScreenProps<
 >;
 
 export function HomeScreen({ navigation }: Props) {
-  const { db } = useData();
-  const [query, setQuery] = useState('');
+  const [venues, setVenues] = useState<Venue[] | null>(null);
+  const [activeType, setActiveType] = useState<string>('الكل');
 
-  const results = useMemo(() => {
-    if (!db || !query.trim()) return null;
-    return searchAll(db, query);
-  }, [db, query]);
+  useEffect(() => listenApprovedVenues(setVenues), []);
 
-  if (!db) return null;
+  const types = useMemo(() => {
+    if (!venues) return ['الكل'];
+    const set = new Set<string>();
+    venues.forEach((v) => v.type?.trim() && set.add(v.type.trim()));
+    return ['الكل', ...Array.from(set)];
+  }, [venues]);
+
+  const filtered = useMemo(() => {
+    if (!venues) return [];
+    if (activeType === 'الكل') return venues;
+    return venues.filter((v) => v.type === activeType);
+  }, [venues, activeType]);
 
   return (
     <View style={styles.screen}>
-      <View style={styles.searchWrap}>
-        <TextInput
-          value={query}
-          onChangeText={setQuery}
-          placeholder="ابحث باسم المطعم، الصنف، أو الكود"
-          placeholderTextColor={colors.inkFaint}
-          style={styles.searchInput}
-        />
-        <Ionicons name="search" size={18} color={colors.inkFaint} style={styles.searchIcon} />
+      <View style={styles.header}>
+        <Text style={styles.greeting}>أهلًا بك 👋</Text>
+        <Text style={styles.sub}>وش تشتهي اليوم؟</Text>
+        <Pressable onPress={() => navigation.navigate('Search')} style={styles.searchBar}>
+          <Ionicons name="search" size={17} color={brandColors.ink50} />
+          <Text style={styles.searchPlaceholder}>ابحث بالرمز أو اسم المطعم</Text>
+        </Pressable>
       </View>
 
-      <ScrollView contentContainerStyle={styles.listContent}>
-        {results ? (
-          <View style={{ gap: spacing.lg }}>
-            {results.restaurants.length > 0 && (
-              <View>
-                <Text style={styles.sectionTitle}>مطاعم</Text>
-                <View style={{ gap: spacing.md, marginTop: spacing.sm }}>
-                  {results.restaurants.map((r) => (
-                    <RestaurantCard
-                      key={r.id}
-                      restaurant={r}
-                      onPress={() => navigation.navigate('Restaurant', { slug: r.slug })}
-                    />
-                  ))}
-                </View>
-              </View>
-            )}
-            {results.products.length > 0 && (
-              <View>
-                <Text style={styles.sectionTitle}>أصناف</Text>
-                <View style={styles.resultCard}>
-                  {results.products.map((hit, i) => (
-                    <Pressable
-                      key={hit.product.id}
-                      onPress={() => navigation.navigate('Restaurant', { slug: hit.restaurant.slug })}
-                      style={[
-                        styles.resultRow,
-                        i === results.products.length - 1 && styles.resultRowLast,
-                      ]}
-                    >
-                      <CodeChip code={hit.product.code} />
-                      <View style={styles.resultBody}>
-                        <Text style={styles.resultName}>{hit.product.name}</Text>
-                        <Text style={styles.resultRestaurant}>{hit.restaurant.name}</Text>
-                      </View>
-                      <Text style={styles.resultPrice}>{formatPrice(hit.product.price)}</Text>
-                    </Pressable>
-                  ))}
-                </View>
-              </View>
-            )}
-            {results.restaurants.length === 0 && results.products.length === 0 && (
-              <View style={styles.empty}>
-                <View style={styles.emptyIconWrap}>
-                  <Ionicons name="search" size={22} color={colors.inkFaint} />
-                </View>
-                <Text style={styles.emptyTitle}>لا نتائج لـ«{query}»</Text>
-                <Text style={styles.emptyText}>جرّب اسم مطعم، اسم صنف، أو كود مثل A01.</Text>
-              </View>
-            )}
-          </View>
-        ) : (
-          <View>
-            <Text style={styles.sectionTitle}>المطاعم القريبة منك</Text>
-            <Text style={styles.sectionSub}>{db.restaurants.length} مشروع طعام صغير على منيو</Text>
-            <View style={{ gap: spacing.md, marginTop: spacing.md }}>
-              {db.restaurants.map((r) => (
-                <RestaurantCard
-                  key={r.id}
-                  restaurant={r}
-                  onPress={() => navigation.navigate('Restaurant', { slug: r.slug })}
-                />
+      {venues === null ? (
+        <View style={styles.center}>
+          <Mascot variant="calm" size={80} />
+        </View>
+      ) : (
+        <ScrollView contentContainerStyle={styles.content}>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.chipsRow}>
+            {types.map((t) => {
+              const active = t === activeType;
+              return (
+                <Pressable key={t} onPress={() => setActiveType(t)} style={[styles.chip, active && styles.chipActive]}>
+                  <Text style={[styles.chipText, active && styles.chipTextActive]}>{t}</Text>
+                </Pressable>
+              );
+            })}
+          </ScrollView>
+
+          <Text style={styles.countLine}>{filtered.length} مكان</Text>
+
+          {filtered.length === 0 ? (
+            <View style={styles.empty}>
+              <Mascot variant="calm" size={86} />
+              <Text style={styles.emptyText}>لا توجد مطاعم منشورة بهذا التصنيف حاليًا.</Text>
+            </View>
+          ) : (
+            <View style={{ gap: 12, marginTop: 12 }}>
+              {filtered.map((v) => (
+                <Pressable
+                  key={v.id}
+                  onPress={() => navigation.navigate('VenueDetail', { venueId: v.id })}
+                  style={({ pressed }) => [styles.card, pressed && styles.cardPressed]}
+                >
+                  <VenueLogo name={v.name} seed={v.id} />
+                  <View style={{ flex: 1, minWidth: 0 }}>
+                    <Text style={styles.cardName} numberOfLines={1}>{v.name?.trim() || 'متجر'}</Text>
+                    {!!v.type && <Text style={styles.cardType}>{v.type}</Text>}
+                    {!!v.address && <Text style={styles.cardAddress} numberOfLines={1}>{v.address}</Text>}
+                  </View>
+                  <Ionicons name="chevron-back" size={18} color={brandColors.ink40} />
+                </Pressable>
               ))}
             </View>
-          </View>
-        )}
-      </ScrollView>
+          )}
+        </ScrollView>
+      )}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: colors.bg },
-  searchWrap: {
-    position: 'relative',
-    paddingHorizontal: spacing.lg,
-    paddingTop: spacing.md,
-    paddingBottom: spacing.sm,
-    justifyContent: 'center',
-  },
-  searchIcon: { position: 'absolute', right: 30, top: '50%', marginTop: -9 },
-  searchInput: {
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.line,
-    borderRadius: radius.md,
-    paddingVertical: 11,
-    paddingRight: 40,
-    paddingLeft: 16,
-    fontFamily: fontFamily.arabic,
-    fontSize: 14.5,
-    color: colors.ink,
-    textAlign: 'right',
-    ...shadow.soft,
-  },
-  listContent: { paddingHorizontal: spacing.lg, paddingBottom: spacing.xxl },
-  sectionTitle: { fontFamily: fontFamily.arabicBold, fontSize: 15, color: colors.ink },
-  sectionSub: { fontFamily: fontFamily.arabic, fontSize: 13, color: colors.inkSoft, marginTop: 2 },
-  resultCard: {
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.line,
-    borderRadius: radius.lg,
-    paddingHorizontal: 12,
-    marginTop: spacing.sm,
-    ...shadow.soft,
-  },
-  resultRow: {
+  screen: { flex: 1, backgroundColor: '#fff' },
+  header: { paddingHorizontal: 20, paddingTop: 16, paddingBottom: 4 },
+  greeting: { fontFamily: brandFont.arExtraBold, fontSize: 20, color: brandColors.text },
+  sub: { fontFamily: brandFont.arRegular, fontSize: 13, color: brandColors.ink55, marginTop: 3, marginBottom: 14 },
+  searchBar: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.md,
-    paddingVertical: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.line,
+    gap: 8,
+    backgroundColor: brandColors.chip06,
+    borderRadius: 999,
+    paddingHorizontal: 16,
+    paddingVertical: 13,
+    marginBottom: 6,
   },
-  resultRowLast: { borderBottomWidth: 0 },
-  resultBody: { flex: 1 },
-  resultName: { fontFamily: fontFamily.arabicSemiBold, fontSize: 14, color: colors.ink },
-  resultRestaurant: { fontFamily: fontFamily.arabic, fontSize: 12, color: colors.inkSoft },
-  resultPrice: {
-    fontFamily: fontFamily.mono,
-    fontSize: 13,
-    color: colors.ink,
-    writingDirection: 'ltr',
+  searchPlaceholder: { fontFamily: brandFont.arRegular, fontSize: 13, color: brandColors.ink50 },
+  center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
+  content: { paddingHorizontal: 20, paddingBottom: 40 },
+  chipsRow: { marginTop: 10, marginBottom: 4 },
+  chip: {
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: brandColors.border12,
+    borderRadius: 999,
+    paddingHorizontal: 14,
+    paddingVertical: 9,
+    marginLeft: 8,
   },
-  empty: { paddingVertical: 36, alignItems: 'center' },
-  emptyIconWrap: {
-    width: 48,
-    height: 48,
-    borderRadius: radius.pill,
-    backgroundColor: colors.surface2,
+  chipActive: { backgroundColor: brandColors.text, borderColor: brandColors.text },
+  chipText: { fontFamily: brandFont.arBold, fontSize: 12.5, color: brandColors.ink55 },
+  chipTextActive: { color: '#fff' },
+  countLine: { fontFamily: brandFont.arRegular, fontSize: 12, color: brandColors.ink50, marginTop: 12 },
+  empty: { alignItems: 'center', paddingVertical: 40, gap: 12 },
+  emptyText: { fontFamily: brandFont.arRegular, fontSize: 13, color: brandColors.ink55, textAlign: 'center', lineHeight: 21, paddingHorizontal: 20 },
+  card: {
+    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: spacing.sm,
+    gap: 14,
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: brandColors.border09,
+    borderRadius: 24,
+    padding: 14,
+    ...brandShadow.card,
   },
-  emptyTitle: { fontFamily: fontFamily.arabicSemiBold, fontSize: 14.5, color: colors.inkSoft },
-  emptyText: { fontFamily: fontFamily.arabic, fontSize: 13, color: colors.inkFaint, marginTop: 4 },
+  cardPressed: { opacity: 0.92 },
+  cardName: { fontFamily: brandFont.arExtraBold, fontSize: 15, color: brandColors.text },
+  cardType: { fontFamily: brandFont.arRegular, fontSize: 12, color: brandColors.ink55, marginTop: 2 },
+  cardAddress: { fontFamily: brandFont.arRegular, fontSize: 11.5, color: brandColors.ink40, marginTop: 2 },
 });

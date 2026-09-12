@@ -5,14 +5,6 @@ import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import * as SplashScreen from 'expo-splash-screen';
 import {
-  useFonts as useSansArabicFonts,
-  IBMPlexSansArabic_400Regular,
-  IBMPlexSansArabic_500Medium,
-  IBMPlexSansArabic_600SemiBold,
-  IBMPlexSansArabic_700Bold,
-} from '@expo-google-fonts/ibm-plex-sans-arabic';
-import { useFonts as useMonoFonts, IBMPlexMono_600SemiBold } from '@expo-google-fonts/ibm-plex-mono';
-import {
   useFonts as useAlmaraiFonts,
   Almarai_400Regular,
   Almarai_700Bold,
@@ -24,9 +16,9 @@ import {
   Figtree_700Bold,
   Figtree_800ExtraBold,
 } from '@expo-google-fonts/figtree';
-import { colors } from './src/theme';
-import { DataProvider } from './src/data/DataContext';
+import { brandColors } from './src/brand/theme';
 import { AuthProvider } from './src/firebase/AuthContext';
+import { FavoritesProvider } from './src/customer/FavoritesContext';
 import { RootNavigator } from './src/navigation/RootNavigator';
 
 SplashScreen.preventAutoHideAsync().catch(() => {});
@@ -39,17 +31,10 @@ if (!I18nManager.isRTL) {
 }
 
 export default function App() {
-  const [sansLoaded] = useSansArabicFonts({
-    IBMPlexSansArabic_400Regular,
-    IBMPlexSansArabic_500Medium,
-    IBMPlexSansArabic_600SemiBold,
-    IBMPlexSansArabic_700Bold,
-  });
-  const [monoLoaded] = useMonoFonts({ IBMPlexMono_600SemiBold });
   const [almaraiLoaded] = useAlmaraiFonts({ Almarai_400Regular, Almarai_700Bold, Almarai_800ExtraBold });
   const [figtreeLoaded] = useFigtreeFonts({ Figtree_400Regular, Figtree_700Bold, Figtree_800ExtraBold });
 
-  const ready = sansLoaded && monoLoaded && almaraiLoaded && figtreeLoaded;
+  const ready = almaraiLoaded && figtreeLoaded;
 
   useEffect(() => {
     if (ready) {
@@ -64,18 +49,18 @@ export default function App() {
   return (
     <SafeAreaProvider>
       <AuthProvider>
-        <DataProvider>
+        <FavoritesProvider>
           <View style={styles.app}>
             <StatusBar style="dark" />
             <RootNavigator />
           </View>
-        </DataProvider>
+        </FavoritesProvider>
       </AuthProvider>
     </SafeAreaProvider>
   );
 }
 
 const styles = StyleSheet.create({
-  app: { flex: 1, backgroundColor: colors.bg },
-  loading: { flex: 1, backgroundColor: colors.bg },
+  app: { flex: 1, backgroundColor: brandColors.bg },
+  loading: { flex: 1, backgroundColor: brandColors.bg },
 });

@@ -1,22 +1,15 @@
-// bt:ec52ad88d4b0903b
 import React from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/native';
 import type { RootStackParamList } from '../../navigation/types';
-import { useData } from '../../data/DataContext';
-import { listFavorites } from '../../data/repo';
-import { colors, fontFamily, radius, shadow, spacing } from '../../theme';
-import { CodeChip } from '../../components/CodeChip';
-import { formatPrice } from '../../utils/format';
+import { brandColors, brandFont } from '../../brand/theme';
+import { Mascot } from '../../brand/Mascot';
+import { useFavorites } from '../../customer/FavoritesContext';
 
 export function FavoritesScreen() {
-  const { db } = useData();
+  const { favorites, toggleFavorite } = useFavorites();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-
-  if (!db) return null;
-  const favorites = listFavorites(db);
 
   return (
     <ScrollView style={styles.screen} contentContainerStyle={styles.content}>
@@ -25,26 +18,29 @@ export function FavoritesScreen() {
 
       {favorites.length === 0 ? (
         <View style={styles.empty}>
-          <View style={styles.emptyIconWrap}>
-            <Ionicons name="heart-outline" size={22} color={colors.inkFaint} />
-          </View>
+          <Mascot variant="calm" size={86} />
           <Text style={styles.emptyTitle}>لا أصناف في المفضلة بعد</Text>
-          <Text style={styles.emptyText}>اضغط على أيقونة القلب داخل أي صنف لإضافته هنا.</Text>
+          <Text style={styles.emptyText}>اضغطي على "إضافة إلى المفضلة" داخل أي صنف لحفظه هنا.</Text>
         </View>
       ) : (
-        <View style={styles.card}>
-          {favorites.map((f, i) => (
+        <View style={styles.list}>
+          {favorites.map((f) => (
             <Pressable
-              key={f.product.id}
-              onPress={() => navigation.navigate('Restaurant', { slug: f.restaurant.slug })}
-              style={[styles.row, i === favorites.length - 1 && styles.rowLast]}
+              key={f.key}
+              onPress={() => navigation.navigate('VenueDetail', { venueId: f.venueId })}
+              style={styles.row}
             >
-              <CodeChip code={f.product.code} />
-              <View style={styles.rowBody}>
-                <Text style={styles.rowName}>{f.product.name}</Text>
-                <Text style={styles.rowRestaurant}>{f.restaurant.name}</Text>
+              <View style={styles.codeChip}>
+                <Text style={styles.codeText}>{f.code}</Text>
               </View>
-              <Text style={styles.rowPrice}>{formatPrice(f.product.price)}</Text>
+              <View style={{ flex: 1, minWidth: 0 }}>
+                <Text style={styles.rowName} numberOfLines={1}>{f.nameAr}</Text>
+                <Text style={styles.rowVenue} numberOfLines={1}>{f.venueName}</Text>
+              </View>
+              <Text style={styles.rowPrice}>{f.price} ر.س</Text>
+              <Pressable onPress={() => toggleFavorite(f)} hitSlop={8}>
+                <Text style={styles.removeText}>✕</Text>
+              </Pressable>
             </Pressable>
           ))}
         </View>
@@ -54,41 +50,19 @@ export function FavoritesScreen() {
 }
 
 const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: colors.bg },
-  content: { padding: spacing.lg, paddingBottom: spacing.xxl },
-  title: { fontFamily: fontFamily.arabicBold, fontSize: 18, color: colors.ink },
-  sub: { fontFamily: fontFamily.arabic, fontSize: 13, color: colors.inkSoft, marginTop: 4, marginBottom: spacing.lg },
-  empty: { paddingVertical: 40, alignItems: 'center' },
-  emptyIconWrap: {
-    width: 48,
-    height: 48,
-    borderRadius: radius.pill,
-    backgroundColor: colors.surface2,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: spacing.sm,
-  },
-  emptyTitle: { fontFamily: fontFamily.arabicSemiBold, fontSize: 14.5, color: colors.inkSoft },
-  emptyText: { fontFamily: fontFamily.arabic, fontSize: 13, color: colors.inkFaint, marginTop: 4, textAlign: 'center' },
-  card: {
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.line,
-    borderRadius: radius.lg,
-    paddingHorizontal: 12,
-    ...shadow.soft,
-  },
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.md,
-    paddingVertical: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.line,
-  },
-  rowLast: { borderBottomWidth: 0 },
-  rowBody: { flex: 1 },
-  rowName: { fontFamily: fontFamily.arabicSemiBold, fontSize: 14, color: colors.ink },
-  rowRestaurant: { fontFamily: fontFamily.arabic, fontSize: 12, color: colors.inkSoft },
-  rowPrice: { fontFamily: fontFamily.mono, fontSize: 13, color: colors.ink, writingDirection: 'ltr' },
+  screen: { flex: 1, backgroundColor: '#fff' },
+  content: { padding: 20, paddingBottom: 40 },
+  title: { fontFamily: brandFont.arExtraBold, fontSize: 20, color: brandColors.text },
+  sub: { fontFamily: brandFont.arRegular, fontSize: 13, color: brandColors.ink55, marginTop: 4, marginBottom: 20 },
+  empty: { alignItems: 'center', paddingVertical: 40, gap: 12 },
+  emptyTitle: { fontFamily: brandFont.arBold, fontSize: 14.5, color: brandColors.text },
+  emptyText: { fontFamily: brandFont.arRegular, fontSize: 13, color: brandColors.ink55, textAlign: 'center', lineHeight: 21, paddingHorizontal: 24 },
+  list: { gap: 4 },
+  row: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: brandColors.chip06 },
+  codeChip: { backgroundColor: brandColors.accent100, borderRadius: 8, paddingHorizontal: 9, paddingVertical: 5 },
+  codeText: { fontFamily: brandFont.enExtraBold, fontSize: 13, color: brandColors.accent800, writingDirection: 'ltr' },
+  rowName: { fontFamily: brandFont.arBold, fontSize: 14, color: brandColors.text },
+  rowVenue: { fontFamily: brandFont.arRegular, fontSize: 11.5, color: brandColors.ink55, marginTop: 1 },
+  rowPrice: { fontFamily: brandFont.enBold, fontSize: 13, color: brandColors.text, writingDirection: 'ltr' },
+  removeText: { fontSize: 15, color: brandColors.ink40, paddingHorizontal: 4 },
 });

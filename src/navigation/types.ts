@@ -4,9 +4,7 @@ export type RootStackParamList = {
   Welcome: undefined;
   Role: undefined;
   Main: undefined;
-  Restaurant: { slug: string };
-  OwnerLogin: undefined;
-  OwnerDashboard: { slug: string };
+  VenueDetail: { venueId: string };
   MerchantAuth: undefined;
   OwnerHome: undefined;
   AdminLogin: undefined;
@@ -15,5 +13,6 @@ export type RootStackParamList = {
 
 export type MainTabParamList = {
   Home: undefined;
+  Search: undefined;
   Favorites: undefined;
 };
