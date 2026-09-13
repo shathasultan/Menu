@@ -7,10 +7,14 @@ service cloud.firestore {
       return request.auth != null;
     }
 
+    // `admin` is a custom claim on the Auth token (kept in sync with
+    // users/{uid}.role by the syncAdminClaim Cloud Function), not a
+    // Firestore read — request.auth.token is always free to check, so this
+    // works in every rule context including list/collectionGroup queries,
+    // where a get()/exists() call on another document is provably rejected
+    // (see the products `list` rule below for where that bit us).
     function isAdmin() {
-      return isSignedIn()
-        && exists(/databases/$(database)/documents/users/$(request.auth.uid))
-        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+      return isSignedIn() && request.auth.token.admin == true;
     }
 
     function isOwner(venueId) {
