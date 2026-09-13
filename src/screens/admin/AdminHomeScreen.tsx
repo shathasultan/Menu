@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../../navigation/types';
@@ -18,6 +19,7 @@ import { Toast } from '../../brand/Toast';
 type Props = NativeStackScreenProps<RootStackParamList, 'AdminHome'>;
 
 export function AdminHomeScreen({ navigation }: Props) {
+  const insets = useSafeAreaInsets();
   const { profile } = useAuth();
   const [pending, setPending] = useState<Venue[]>([]);
   const [approved, setApproved] = useState<Venue[]>([]);
@@ -48,7 +50,7 @@ export function AdminHomeScreen({ navigation }: Props) {
     <View style={styles.screen}>
       <View style={styles.darkSection}>
         <View style={styles.decorCircle} />
-        <View style={styles.header}>
+        <View style={[styles.header, { paddingTop: insets.top + 12 }]}>
           <View>
             <Text style={styles.wordmark}>
               menu<Text style={{ color: brandColors.accent }}>.</Text> <Text style={styles.adminTag}>الإدارة</Text>
@@ -76,7 +78,7 @@ export function AdminHomeScreen({ navigation }: Props) {
         </View>
       </View>
 
-      <ScrollView style={styles.body} contentContainerStyle={styles.bodyContent}>
+      <ScrollView style={styles.body} contentContainerStyle={[styles.bodyContent, { paddingBottom: insets.bottom + 30 }]}>
         <Text style={styles.sectionTitle}>طلبات بانتظار الموافقة</Text>
         <Text style={styles.sectionSub}>لا يظهر المطعم للعملاء إلا بعد اعتماده.</Text>
 
@@ -171,7 +173,6 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     justifyContent: 'space-between',
     paddingHorizontal: 20,
-    paddingTop: 58,
     paddingBottom: 22,
   },
   wordmark: { fontFamily: brandFont.enExtraBold, fontSize: 22, color: '#fff' },

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { brandColors, brandFont } from '../../brand/theme';
 import type { VenueProduct } from '../../firebase/types';
@@ -13,12 +14,13 @@ interface Props {
 }
 
 export function ProductDetailSheet({ product, venueName, favorite, onClose, onToggleFavorite }: Props) {
+  const insets = useSafeAreaInsets();
   return (
     <Modal visible={!!product} animationType="slide" transparent onRequestClose={onClose}>
       <View style={styles.overlay}>
         <Pressable style={StyleSheet.absoluteFill} onPress={onClose} />
         {product && (
-          <View style={styles.sheet}>
+          <View style={[styles.sheet, { paddingBottom: insets.bottom + 16 }]}>
             <Pressable onPress={onClose} style={styles.closeBtn} hitSlop={8}>
               <Ionicons name="close" size={18} color={brandColors.ink55} />
             </Pressable>
@@ -52,7 +54,7 @@ export function ProductDetailSheet({ product, venueName, favorite, onClose, onTo
 
 const styles = StyleSheet.create({
   overlay: { flex: 1, backgroundColor: 'rgba(32,30,29,0.45)', justifyContent: 'flex-end' },
-  sheet: { backgroundColor: '#fff', borderTopLeftRadius: 28, borderTopRightRadius: 28, padding: 22, paddingBottom: 34 },
+  sheet: { backgroundColor: '#fff', borderTopLeftRadius: 28, borderTopRightRadius: 28, padding: 22 },
   closeBtn: {
     alignSelf: 'flex-end',
     backgroundColor: brandColors.chip06,

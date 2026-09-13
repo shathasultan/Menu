@@ -1,5 +1,6 @@
 import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../../navigation/types';
 import { brandColors, brandFont, brandShadow } from '../../brand/theme';
@@ -14,8 +15,9 @@ const POINTS = [
 ];
 
 export function WelcomeScreen({ navigation }: Props) {
+  const insets = useSafeAreaInsets();
   return (
-    <View style={styles.screen}>
+    <View style={[styles.screen, { paddingTop: insets.top + 16, paddingBottom: insets.bottom + 16 }]}>
       <View style={styles.decorA} />
       <View style={styles.decorB} />
       <Mascot variant="default" size={150} />
@@ -57,7 +59,7 @@ export function WelcomeScreen({ navigation }: Props) {
 }
 
 const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: '#fff', paddingHorizontal: 22, paddingBottom: 34, justifyContent: 'flex-end', overflow: 'hidden' },
+  screen: { flex: 1, backgroundColor: '#fff', paddingHorizontal: 22, justifyContent: 'flex-end', overflow: 'hidden' },
   decorA: { position: 'absolute', top: -120, right: -90, width: 300, height: 300, borderRadius: 999, backgroundColor: brandColors.accent100 },
   decorB: { position: 'absolute', top: 104, left: -70, width: 170, height: 170, borderRadius: 999, backgroundColor: brandColors.sage100 },
   content: {},

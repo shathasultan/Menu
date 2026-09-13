@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../../navigation/types';
@@ -15,6 +16,7 @@ type Props = NativeStackScreenProps<RootStackParamList, 'MerchantAuth'>;
 type Mode = 'login' | 'signup';
 
 export function MerchantAuthScreen({ navigation }: Props) {
+  const insets = useSafeAreaInsets();
   const [mode, setMode] = useState<Mode>('login');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -68,7 +70,10 @@ export function MerchantAuthScreen({ navigation }: Props) {
   };
 
   return (
-    <ScrollView style={styles.screen} contentContainerStyle={styles.content}>
+    <ScrollView
+      style={styles.screen}
+      contentContainerStyle={[styles.content, { paddingTop: insets.top + 12, paddingBottom: insets.bottom + 16 }]}
+    >
       <View style={styles.decorCircle} />
 
       <Pressable onPress={() => navigation.goBack()} style={styles.backBtn} hitSlop={8}>
@@ -207,7 +212,7 @@ function mapAuthError(code?: string): string {
 
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: brandColors.bg },
-  content: { padding: 22, paddingTop: 54, paddingBottom: 34 },
+  content: { padding: 22 },
   decorCircle: {
     position: 'absolute',
     top: -110,

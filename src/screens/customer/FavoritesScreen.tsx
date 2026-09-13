@@ -1,5 +1,6 @@
 import React from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/native';
 import type { RootStackParamList } from '../../navigation/types';
@@ -8,11 +9,12 @@ import { Mascot } from '../../brand/Mascot';
 import { useFavorites } from '../../customer/FavoritesContext';
 
 export function FavoritesScreen() {
+  const insets = useSafeAreaInsets();
   const { favorites, toggleFavorite } = useFavorites();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
   return (
-    <ScrollView style={styles.screen} contentContainerStyle={styles.content}>
+    <ScrollView style={styles.screen} contentContainerStyle={[styles.content, { paddingTop: insets.top + 20 }]}>
       <Text style={styles.title}>المفضلة</Text>
       <Text style={styles.sub}>الأصناف التي حفظتها لتطلبها لاحقًا بالكود.</Text>
 

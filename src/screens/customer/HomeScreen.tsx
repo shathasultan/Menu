@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import type { CompositeScreenProps } from '@react-navigation/native';
 import type { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
@@ -17,6 +18,7 @@ type Props = CompositeScreenProps<
 >;
 
 export function HomeScreen({ navigation }: Props) {
+  const insets = useSafeAreaInsets();
   const [venues, setVenues] = useState<Venue[] | null>(null);
   const [activeType, setActiveType] = useState<string>('الكل');
 
@@ -37,7 +39,7 @@ export function HomeScreen({ navigation }: Props) {
 
   return (
     <View style={styles.screen}>
-      <View style={styles.header}>
+      <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
         <Text style={styles.greeting}>أهلًا بك 👋</Text>
         <Text style={styles.sub}>وش تشتهي اليوم؟</Text>
         <Pressable onPress={() => navigation.navigate('Search')} style={styles.searchBar}>
@@ -97,7 +99,7 @@ export function HomeScreen({ navigation }: Props) {
 
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: '#fff' },
-  header: { paddingHorizontal: 20, paddingTop: 16, paddingBottom: 4 },
+  header: { paddingHorizontal: 20, paddingBottom: 4 },
   greeting: { fontFamily: brandFont.arExtraBold, fontSize: 20, color: brandColors.text },
   sub: { fontFamily: brandFont.arRegular, fontSize: 13, color: brandColors.ink55, marginTop: 3, marginBottom: 14 },
   searchBar: {

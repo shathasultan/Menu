@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -11,6 +12,7 @@ import { fetchUserProfile, signOutUser } from '../../firebase/authService';
 type Props = NativeStackScreenProps<RootStackParamList, 'AdminLogin'>;
 
 export function AdminLoginScreen({ navigation }: Props) {
+  const insets = useSafeAreaInsets();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -40,7 +42,7 @@ export function AdminLoginScreen({ navigation }: Props) {
   };
 
   return (
-    <View style={styles.screen}>
+    <View style={[styles.screen, { paddingTop: insets.top + 14, paddingBottom: insets.bottom + 16 }]}>
       <View style={styles.decorCircle} />
 
       <Pressable onPress={() => navigation.goBack()} style={styles.backBtn} hitSlop={8}>
@@ -91,7 +93,7 @@ export function AdminLoginScreen({ navigation }: Props) {
 }
 
 const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: brandColors.adminBg, paddingHorizontal: 22, paddingTop: 60, paddingBottom: 34 },
+  screen: { flex: 1, backgroundColor: brandColors.adminBg, paddingHorizontal: 22 },
   decorCircle: {
     position: 'absolute',
     bottom: -90,

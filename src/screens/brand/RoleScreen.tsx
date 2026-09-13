@@ -1,5 +1,6 @@
 import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../../navigation/types';
@@ -10,6 +11,7 @@ import { useAuth } from '../../firebase/AuthContext';
 type Props = NativeStackScreenProps<RootStackParamList, 'Role'>;
 
 export function RoleScreen({ navigation }: Props) {
+  const insets = useSafeAreaInsets();
   const { firebaseUser } = useAuth();
 
   const handleMerchant = () => {
@@ -21,7 +23,7 @@ export function RoleScreen({ navigation }: Props) {
   };
 
   return (
-    <View style={styles.screen}>
+    <View style={[styles.screen, { paddingTop: insets.top + 27, paddingBottom: insets.bottom + 30 }]}>
       <View style={styles.decor} />
 
       <Text style={styles.wordmark}>
@@ -60,13 +62,15 @@ export function RoleScreen({ navigation }: Props) {
         </Pressable>
       </View>
 
-      <Text style={styles.footnote}>التصفّح متاح دون تسجيل، والتسجيل مطلوب لأصحاب المتاجر فقط.</Text>
+      <Text style={[styles.footnote, { bottom: insets.bottom + 16 }]}>
+        التصفّح متاح دون تسجيل، والتسجيل مطلوب لأصحاب المتاجر فقط.
+      </Text>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: '#fff', paddingHorizontal: 22, paddingTop: 74, paddingBottom: 30, overflow: 'hidden' },
+  screen: { flex: 1, backgroundColor: '#fff', paddingHorizontal: 22, overflow: 'hidden' },
   decor: { position: 'absolute', top: -110, left: -80, width: 240, height: 240, borderRadius: 999, backgroundColor: brandColors.accent100 },
   wordmark: { fontFamily: brandFont.enExtraBold, fontSize: 26, color: brandColors.text, writingDirection: 'ltr' },
   title: { fontFamily: brandFont.arExtraBold, fontSize: 27, color: brandColors.text, marginTop: 18, marginBottom: 6, lineHeight: 36 },
@@ -89,7 +93,6 @@ const styles = StyleSheet.create({
   chevronCircle: { width: 34, height: 34, borderRadius: 999, alignItems: 'center', justifyContent: 'center' },
   footnote: {
     position: 'absolute',
-    bottom: 48,
     left: 22,
     right: 22,
     textAlign: 'center',

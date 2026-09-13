@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../../navigation/types';
@@ -22,6 +23,7 @@ const TABS: { key: TabKey; label: string; icon: keyof typeof Ionicons.glyphMap }
 ];
 
 export function OwnerDashboardScreen({ route, navigation }: Props) {
+  const insets = useSafeAreaInsets();
   const { profile, venue, loading, refreshVenue } = useAuth();
   const [tab, setTab] = useState<TabKey>('menu');
   const [toast, setToast] = useState<string | null>(null);
@@ -59,7 +61,7 @@ export function OwnerDashboardScreen({ route, navigation }: Props) {
 
   return (
     <View style={styles.screen}>
-      <View style={styles.header}>
+      <View style={[styles.header, { paddingTop: insets.top + 12 }]}>
         <Text style={styles.storeName} numberOfLines={1}>
           {venue.name?.trim() ? venue.name : 'متجرك'}
         </Text>
@@ -87,7 +89,7 @@ export function OwnerDashboardScreen({ route, navigation }: Props) {
         {tab === 'account' && <AccountTab profile={profile} onToast={showToast} />}
       </View>
 
-      <View style={styles.tabBar}>
+      <View style={[styles.tabBar, { paddingBottom: insets.bottom + 10 }]}>
         {TABS.map((t) => {
           const active = tab === t.key;
           return (
@@ -113,7 +115,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     backgroundColor: brandColors.sage100,
     paddingHorizontal: 20,
-    paddingTop: 58,
     paddingBottom: 20,
   },
   storeName: { fontFamily: brandFont.arExtraBold, fontSize: 17, color: brandColors.text, flexShrink: 1 },

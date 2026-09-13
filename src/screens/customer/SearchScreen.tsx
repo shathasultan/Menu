@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import type { CompositeScreenProps } from '@react-navigation/native';
 import type { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
@@ -20,6 +21,7 @@ type VenueResult = { kind: 'venue'; item: Venue };
 type Result = ProductResult | VenueResult;
 
 export function SearchScreen({ navigation }: Props) {
+  const insets = useSafeAreaInsets();
   const [venues, setVenues] = useState<Venue[]>([]);
   const [products, setProducts] = useState<SearchableProduct[]>([]);
   const [query, setQuery] = useState('');
@@ -54,7 +56,7 @@ export function SearchScreen({ navigation }: Props) {
 
   return (
     <View style={styles.screen}>
-      <View style={styles.header}>
+      <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
         <View style={styles.searchBar}>
           <Ionicons name="search" size={17} color={brandColors.ink50} />
           <TextInput
@@ -133,7 +135,7 @@ export function SearchScreen({ navigation }: Props) {
 
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: '#fff' },
-  header: { paddingHorizontal: 20, paddingTop: 16, paddingBottom: 10 },
+  header: { paddingHorizontal: 20, paddingBottom: 10 },
   searchBar: {
     flexDirection: 'row',
     alignItems: 'center',

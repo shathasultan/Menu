@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Modal, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { brandColors, brandFont } from '../../brand/theme';
 import type { VenueCategory, VenueProduct } from '../../firebase/types';
@@ -16,6 +17,7 @@ interface Props {
 }
 
 export function ProductFormSheet({ visible, venueId, categories, defaultCategoryId, product, onClose, onSaved }: Props) {
+  const insets = useSafeAreaInsets();
   const [categoryId, setCategoryId] = useState(defaultCategoryId ?? categories[0]?.id ?? '');
   const [nameAr, setNameAr] = useState('');
   const [nameEn, setNameEn] = useState('');
@@ -71,7 +73,7 @@ export function ProductFormSheet({ visible, venueId, categories, defaultCategory
     <Modal visible={visible} animationType="slide" transparent onRequestClose={onClose}>
       <View style={styles.overlay}>
         <Pressable style={StyleSheet.absoluteFill} onPress={onClose} />
-        <View style={styles.sheet}>
+        <View style={[styles.sheet, { paddingBottom: insets.bottom + 16 }]}>
           <ScrollView showsVerticalScrollIndicator={false}>
             <Pressable onPress={onClose} style={styles.closeBtn} hitSlop={8}>
               <Ionicons name="close" size={18} color={brandColors.ink55} />
@@ -126,7 +128,7 @@ export function ProductFormSheet({ visible, venueId, categories, defaultCategory
 
 const styles = StyleSheet.create({
   overlay: { flex: 1, backgroundColor: 'rgba(32,30,29,0.45)', justifyContent: 'flex-end' },
-  sheet: { backgroundColor: '#fff', borderTopLeftRadius: 28, borderTopRightRadius: 28, padding: 22, paddingBottom: 34, maxHeight: '88%' },
+  sheet: { backgroundColor: '#fff', borderTopLeftRadius: 28, borderTopRightRadius: 28, padding: 22, maxHeight: '88%' },
   closeBtn: {
     alignSelf: 'flex-end',
     backgroundColor: brandColors.chip06,
