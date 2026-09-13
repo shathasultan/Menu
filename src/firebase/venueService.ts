@@ -27,9 +27,61 @@ export function listenCategories(venueId: string, cb: (cats: VenueCategory[]) =>
   return onSnapshot(q, (snap) => cb(snap.docs.map((d) => d.data() as VenueCategory)));
 }
 
+// Reads the owner's own products by ID (via venues/{venueId}.productIds)
+// instead of a `list` query on the subcollection. Firestore's collection
+// group query prover rejects the products `list` rule outright if it has
+// ANY condition beyond the single bare `venueApproved == true` check the
+// cross-venue search relies on — even a get()-free, path-only check like
+// isOwner(venueId) breaks it, so the owner's own view can't share that
+// rule. `get`-type reads (individual doc listeners) have no such
+// restriction, so this stays fully real-time without needing `list` at all.
 export function listenProducts(venueId: string, cb: (products: VenueProduct[]) => void): () => void {
-  const q = query(collection(db, 'venues', venueId, 'products'), orderBy('order'));
-  return onSnapshot(q, (snap) => cb(snap.docs.map((d) => d.data() as VenueProduct)));
+  const productMap = new Map<string, VenueProduct>();
+  const productUnsubs = new Map<string, () => void>();
+  let disposed = false;
+
+  const emit = () => {
+    const list = Array.from(productMap.values());
+    list.sort((a, b) => a.order - b.order);
+    cb(list);
+  };
+
+  const unsubVenue = onSnapshot(doc(db, 'venues', venueId), (venueSnap) => {
+    if (disposed) return;
+    const ids: string[] = venueSnap.exists() ? venueSnap.data().productIds ?? [] : [];
+    const idSet = new Set(ids);
+
+    for (const [id, unsub] of productUnsubs) {
+      if (!idSet.has(id)) {
+        unsub();
+        productUnsubs.delete(id);
+        productMap.delete(id);
+      }
+    }
+
+    for (const id of ids) {
+      if (productUnsubs.has(id)) continue;
+      const unsub = onSnapshot(doc(db, 'venues', venueId, 'products', id), (prodSnap) => {
+        if (disposed) return;
+        if (prodSnap.exists()) {
+          productMap.set(id, prodSnap.data() as VenueProduct);
+        } else {
+          productMap.delete(id);
+        }
+        emit();
+      });
+      productUnsubs.set(id, unsub);
+    }
+
+    emit();
+  });
+
+  return () => {
+    disposed = true;
+    unsubVenue();
+    for (const unsub of productUnsubs.values()) unsub();
+    productUnsubs.clear();
+  };
 }
 
 export async function addCategory(venueId: string, name: string): Promise<void> {
