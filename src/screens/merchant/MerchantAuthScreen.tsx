@@ -25,18 +25,20 @@ export function MerchantAuthScreen({ navigation }: Props) {
   const [submitting, setSubmitting] = useState(false);
 
   const google = useGoogleAuth();
-  const { firebaseUser } = useAuth();
+  const { firebaseUser, refreshAll } = useAuth();
   const navigatedRef = useRef(false);
 
-  // Covers both the email/password path (signUpMerchant/signInMerchant below)
-  // and the Google path (useGoogleAuth signs in internally with no callback) —
-  // one place navigates onward the moment a session exists.
+  // Covers the Google path only (useGoogleAuth signs in internally with no
+  // callback) — the email/password path navigates explicitly at the end of
+  // handleSubmit instead, once ensureMerchantDocs is guaranteed to have
+  // finished writing the user/venue docs (see comment there for why that
+  // ordering matters).
   useEffect(() => {
     if (firebaseUser && !navigatedRef.current) {
       navigatedRef.current = true;
-      navigation.replace('OwnerHome', { justSignedIn: true });
+      refreshAll().finally(() => navigation.replace('OwnerHome', { justSignedIn: true }));
     }
-  }, [firebaseUser, navigation]);
+  }, [firebaseUser, navigation, refreshAll]);
 
   const validate = (): string | null => {
     if (!email.trim() || !email.includes('@')) return 'الرجاء إدخال بريد إلكتروني صحيح.';
@@ -60,8 +62,18 @@ export function MerchantAuthScreen({ navigation }: Props) {
         await signInMerchant(email.trim(), password);
       }
       setPassword('');
-      // Navigation happens in the firebaseUser effect above once the auth
-      // state listener picks up the new session.
+      // Navigate here rather than relying purely on the firebaseUser effect
+      // above: createUserWithEmailAndPassword fires onAuthStateChanged (and
+      // its one-shot profile/venue fetch in AuthContext) before
+      // signUpMerchant has finished writing the user/venue docs, so that
+      // first fetch can land on null with nothing to retry it. By the time
+      // signUpMerchant resolves here, the docs are guaranteed to exist —
+      // refreshAll() re-fetches them before OwnerDashboardScreen ever renders.
+      if (!navigatedRef.current) {
+        navigatedRef.current = true;
+        await refreshAll();
+        navigation.replace('OwnerHome', { justSignedIn: true });
+      }
     } catch (e: any) {
       setError(mapAuthError(e?.code));
     } finally {

@@ -24,7 +24,7 @@ const TABS: { key: TabKey; label: string; icon: keyof typeof Ionicons.glyphMap }
 
 export function OwnerDashboardScreen({ route, navigation }: Props) {
   const insets = useSafeAreaInsets();
-  const { profile, venue, loading, refreshVenue } = useAuth();
+  const { firebaseUser, profile, venue, loading, refreshVenue } = useAuth();
   const [tab, setTab] = useState<TabKey>('menu');
   const [toast, setToast] = useState<string | null>(null);
   const welcomedRef = useRef(false);
@@ -41,7 +41,18 @@ export function OwnerDashboardScreen({ route, navigation }: Props) {
     }
   }, [route.params?.justSignedIn, profile]);
 
-  if (loading) {
+  // Only redirect once we're sure there's truly no session — never during
+  // render (calling navigation there while profile/venue are still catching
+  // up after signup retriggers this render and loops: "Maximum update depth
+  // exceeded"). While signed in but profile/venue haven't loaded yet, the
+  // loading branch below just keeps waiting instead of bouncing away.
+  useEffect(() => {
+    if (!loading && !firebaseUser) {
+      navigation.replace('MerchantAuth');
+    }
+  }, [loading, firebaseUser, navigation]);
+
+  if (loading || (firebaseUser && (!profile || !venue))) {
     return (
       <View style={styles.center}>
         <ActivityIndicator color={brandColors.sage} />
@@ -49,8 +60,7 @@ export function OwnerDashboardScreen({ route, navigation }: Props) {
     );
   }
 
-  if (!profile || !venue) {
-    navigation.replace('MerchantAuth');
+  if (!firebaseUser || !profile || !venue) {
     return null;
   }
 
