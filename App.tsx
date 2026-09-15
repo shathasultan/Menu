@@ -31,10 +31,18 @@ if (!I18nManager.isRTL) {
 }
 
 export default function App() {
-  const [almaraiLoaded] = useAlmaraiFonts({ Almarai_400Regular, Almarai_700Bold, Almarai_800ExtraBold });
-  const [figtreeLoaded] = useFigtreeFonts({ Figtree_400Regular, Figtree_700Bold, Figtree_800ExtraBold });
+  const [almaraiLoaded, almaraiError] = useAlmaraiFonts({ Almarai_400Regular, Almarai_700Bold, Almarai_800ExtraBold });
+  const [figtreeLoaded, figtreeError] = useFigtreeFonts({ Figtree_400Regular, Figtree_700Bold, Figtree_800ExtraBold });
 
-  const ready = almaraiLoaded && figtreeLoaded;
+  // A font that fails to arrive must not take the app down with it. Gating on
+  // `loaded` alone leaves a blank white view on screen forever with nothing to
+  // act on — the screens still read fine in the system fallback face.
+  const ready = (almaraiLoaded || !!almaraiError) && (figtreeLoaded || !!figtreeError);
+
+  useEffect(() => {
+    const err = almaraiError ?? figtreeError;
+    if (err) console.warn('Brand fonts failed to load; falling back to the system face.', err);
+  }, [almaraiError, figtreeError]);
 
   useEffect(() => {
     if (ready) {
