@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>تعرّف على منيو</title>
+<meta name="description" content="منيو يجمع قوائم المطاعم والمقاهي، ولكل منتج رمز ثابت يختصر الطلب.">
+<meta name="theme-color" content="#C67139">
+<link rel="icon" href="/favicon.ico">
+<link rel="apple-touch-icon" href="/icon.png">
+<meta property="og:title" content="تعرّف على منيو">
+<meta property="og:description" content="القائمة تُبنى مرة، والرمز يبقى للأبد. جرّب الأدوار الثلاثة قبل أن تفتح التطبيق.">
+<meta property="og:type" content="website">
+<style>
+html{color-scheme:light;height:100%}
+body{margin:0;min-height:100%;background:#FDF9F3;-webkit-text-size-adjust:100%}
+img{max-width:100%}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Almarai:wght@400;700;800&family=Figtree:wght@400;600;800&display=swap">
+<style>
+:root{
+  color-scheme: light;
+  --ink:#201E1D;
+  --ink-75:rgba(32,30,29,.75);
+  --ink-55:rgba(32,30,29,.55);
+  --ink-42:rgba(32,30,29,.42);
+  --line:rgba(32,30,29,.12);
+  --hair:rgba(32,30,29,.08);
+  --chip:rgba(32,30,29,.06);
+
+  --surface:#FFFFFF;
+  --surface-2:#FDF9F3;
+  --cream:#F5EAD8;
+  --cream-deep:#EDDFC8;
+
+  --terra:#C67139;
+  --terra-deep:#8C491A;
+  --terra-100:#FFF2EB;
+  --terra-200:#FFE1D0;
+
+  --sage:#7A8A5E;
+  --sage-deep:#56633F;
+  --sage-100:#F0FAE1;
+  --sage-200:#E1EECC;
+
+  --r-card:22px;
+  --r-sm:14px;
+  --r-pill:999px;
+
+  --ar:'Almarai','Segoe UI',system-ui,sans-serif;
+  --lt:'Figtree','Helvetica Neue',Arial,sans-serif;
+}
+*{box-sizing:border-box}
+
+.page{
+  direction:rtl;font-family:var(--ar);color:var(--ink);
+  background:
+    radial-gradient(1100px 620px at 88% -8%, rgba(198,113,57,.13), transparent 62%),
+    radial-gradient(900px 560px at 6% 4%, rgba(122,138,94,.14), transparent 60%),
+    linear-gradient(180deg,#FDF9F3 0%,#F7EFE2 46%,#F5EAD8 100%);
+  min-height:100%;padding-inline:20px;padding-block:0;overflow-x:hidden;
+}
+.wrap{max-width:1140px;margin-inline:auto}
+h1,h2,h3,h4,p{margin:0}
+h1,h2,h3{text-wrap:balance;line-height:1.28}
+.eyebrow{font-size:13px;font-weight:800;letter-spacing:.06em;color:var(--sage-deep)}
+.lede{font-size:16px;line-height:2;color:var(--ink-75);max-width:40ch}
+
+.code{font-family:var(--lt);font-weight:800;letter-spacing:-.3px;direction:ltr;unicode-bidi:isolate;display:inline-block}
+.code-chip{
+  font-family:var(--lt);font-weight:800;letter-spacing:-.3px;direction:ltr;unicode-bidi:isolate;
+  display:inline-flex;align-items:center;justify-content:center;min-width:44px;padding:5px 9px;
+  border-radius:9px;font-size:14px;line-height:1;background:var(--terra-100);color:var(--terra-deep);
+  border:1px solid var(--terra-200);flex:none;
+}
+.code-chip.sg{background:var(--sage-100);color:var(--sage-deep);border-color:var(--sage-200)}
+
+/* ---------- masthead ---------- */
+.masthead{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-block:26px 8px}
+.wordmark{display:flex;align-items:center;gap:10px}
+.mark{
+  width:36px;height:36px;border-radius:11px;flex:none;
+  background:linear-gradient(150deg,var(--terra) 0%,var(--terra-deep) 100%);
+  display:grid;place-items:center;box-shadow:0 6px 16px rgba(198,113,57,.26);
+}
+.mark span{font-family:var(--lt);font-weight:800;color:#fff;font-size:17px;line-height:1}
+.wordmark b{font-family:var(--lt);font-weight:800;font-size:20px;letter-spacing:-.4px}
+.masthead .tag{
+  font-size:12.5px;font-weight:700;color:var(--ink-55);background:var(--surface);
+  border:1px solid var(--line);padding:7px 13px;border-radius:var(--r-pill);
+}
+
+/* ---------- hero ---------- */
+.hero{display:grid;grid-template-columns:1.02fr .98fr;gap:46px;align-items:start;padding-block:40px 58px}
+.hero h1{font-size:clamp(34px,5.1vw,58px);font-weight:800;letter-spacing:-.5px}
+.hero h1 .accent{color:var(--terra-deep)}
+.hero-copy{display:flex;flex-direction:column;gap:22px;align-items:flex-start;padding-top:18px}
+
+.cta-row{display:flex;flex-wrap:wrap;gap:12px}
+.btn{
+  font-family:var(--ar);font-size:15px;font-weight:800;padding:14px 26px;border-radius:var(--r-pill);
+  border:1px solid transparent;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:9px;
+  transition:transform .16s ease,box-shadow .16s ease,background .16s ease;
+}
+.btn-primary{background:var(--terra);color:#fff;box-shadow:0 8px 22px rgba(198,113,57,.28)}
+.btn-primary:hover{background:var(--terra-deep);transform:translateY(-1px)}
+.btn-ghost{background:var(--surface);color:var(--ink);border-color:var(--line)}
+.btn-ghost:hover{border-color:var(--ink-42);transform:translateY(-1px)}
+.btn:focus-visible{outline:3px solid var(--terra);outline-offset:3px}
+
+.stats{display:flex;flex-wrap:wrap;gap:12px;width:100%}
+.stat{flex:1 1 150px;background:var(--surface);border:1px solid var(--hair);border-radius:var(--r-sm);padding:15px 17px;box-shadow:0 2px 10px rgba(32,30,29,.04)}
+.stat .big{font-size:27px;line-height:1.1;display:block;margin-bottom:6px;font-family:var(--lt);font-weight:800}
+.stat .big.c{color:var(--terra-deep);letter-spacing:-.5px;direction:ltr;unicode-bidi:isolate}
+.stat small{font-size:12.5px;color:var(--ink-55);line-height:1.6;display:block;font-weight:400}
+
+/* ---------- interactive demo ---------- */
+.demo{display:flex;flex-direction:column;align-items:center;gap:14px}
+.demo-hint{
+  display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:800;
+  color:var(--terra-deep);background:var(--terra-100);border:1px solid var(--terra-200);
+  padding:8px 16px;border-radius:var(--r-pill);
+}
+.roletabs{
+  display:flex;gap:4px;background:var(--surface);border:1px solid var(--line);
+  border-radius:var(--r-pill);padding:4px;width:100%;max-width:300px;
+}
+.roletabs button{
+  flex:1;font-family:var(--ar);font-size:13px;font-weight:800;padding:9px 6px;
+  border:0;border-radius:var(--r-pill);background:transparent;color:var(--ink-55);cursor:pointer;
+  transition:background .16s ease,color .16s ease;
+}
+.roletabs button:hover{color:var(--ink)}
+.roletabs button:focus-visible{outline:2px solid var(--terra);outline-offset:1px}
+.roletabs button[aria-pressed="true"]{color:#fff}
+.roletabs button[data-r="c"][aria-pressed="true"]{background:var(--terra)}
+.roletabs button[data-r="m"][aria-pressed="true"]{background:var(--sage)}
+.roletabs button[data-r="a"][aria-pressed="true"]{background:var(--ink)}
+
+.phone{width:300px;max-width:100%;background:var(--ink);border-radius:38px;padding:9px;box-shadow:0 26px 54px rgba(32,30,29,.22)}
+.screen{background:var(--surface);border-radius:30px;overflow:hidden;padding:14px 12px 16px;min-height:414px;display:flex;flex-direction:column}
+.screen-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;padding-inline:4px}
+.screen-top b{font-family:var(--lt);font-weight:800;font-size:15px}
+.screen-who{font-size:11px;font-weight:800;padding:4px 10px;border-radius:var(--r-pill)}
+.screen-who.c{background:var(--terra-100);color:var(--terra-deep)}
+.screen-who.m{background:var(--sage-100);color:var(--sage-deep)}
+.screen-who.a{background:var(--chip);color:var(--ink-75)}
+
+.searchbox{display:flex;align-items:center;gap:8px;background:var(--chip);border-radius:var(--r-pill);padding:4px 14px;margin-bottom:10px}
+.searchbox input{
+  flex:1;min-width:0;border:0;background:transparent;font-family:var(--ar);font-size:13px;
+  color:var(--ink);padding:8px 0;
+}
+.searchbox input::placeholder{color:var(--ink-42)}
+.searchbox input:focus{outline:none}
+.searchbox .mag{color:var(--ink-42);font-size:13px;flex:none}
+
+.banner{
+  font-size:11.5px;line-height:1.7;padding:10px 12px;border-radius:12px;margin-bottom:10px;
+  background:var(--terra-100);color:var(--terra-deep);border:1px solid var(--terra-200);
+}
+.banner.sg{background:var(--sage-100);color:var(--sage-deep);border-color:var(--sage-200)}
+
+.list{flex:1;overflow:hidden}
+.row{display:flex;align-items:center;gap:9px;padding:9px 4px;border-bottom:1px solid var(--hair)}
+.row:last-child{border-bottom:0}
+.row .meta{flex:1;min-width:0}
+.row .meta b{display:block;font-size:12.5px;font-weight:700;margin-bottom:2px}
+.row .meta small{font-size:11px;color:var(--ink-42)}
+.price{font-family:var(--lt);font-weight:800;font-size:12.5px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.price.off{color:var(--ink-42);text-decoration:line-through}
+.pill{font-size:10px;font-weight:700;padding:4px 8px;border-radius:var(--r-pill);white-space:nowrap;border:0;font-family:var(--ar)}
+.pill.ok{background:var(--sage-100);color:var(--sage-deep)}
+.pill.out{background:var(--chip);color:var(--ink-42)}
+.pill.rev{background:var(--terra-100);color:var(--terra-deep)}
+button.pill{cursor:pointer;transition:filter .15s ease}
+button.pill:hover{filter:brightness(.94)}
+button.pill:focus-visible{outline:2px solid var(--terra);outline-offset:2px}
+.heart{border:0;background:transparent;cursor:pointer;font-size:14px;line-height:1;padding:3px;color:var(--ink-42);transition:color .15s ease,transform .15s ease}
+.heart[aria-pressed="true"]{color:var(--terra)}
+.heart:hover{transform:scale(1.14)}
+.heart:focus-visible{outline:2px solid var(--terra);outline-offset:2px}
+
+.empty{flex:1;display:grid;place-items:center;text-align:center;padding:26px 18px}
+.empty div{font-size:12.5px;color:var(--ink-42);line-height:1.9}
+.empty b{display:block;font-size:14px;color:var(--ink-55);margin-bottom:7px;font-weight:800}
+
+.ministats{display:flex;gap:7px;margin-bottom:11px}
+.ministat{flex:1;background:var(--surface-2);border:1px solid var(--hair);border-radius:11px;padding:9px 8px;text-align:center}
+.ministat b{display:block;font-family:var(--lt);font-weight:800;font-size:17px;line-height:1.2}
+.ministat small{font-size:9.5px;color:var(--ink-42);display:block;margin-top:2px}
+
+.demo-foot{display:flex;align-items:center;gap:14px;font-size:12px;color:var(--ink-42)}
+.linkbtn{border:0;background:transparent;font-family:var(--ar);font-size:12px;font-weight:800;color:var(--ink-55);cursor:pointer;text-decoration:underline;text-underline-offset:3px;padding:4px}
+.linkbtn:hover{color:var(--ink)}
+.linkbtn:focus-visible{outline:2px solid var(--terra);outline-offset:2px}
+
+.toast{
+  position:fixed;inset-block-end:calc(env(safe-area-inset-bottom,0px) + 22px);inset-inline:0;
+  margin-inline:auto;width:max-content;max-width:88vw;
+  background:var(--ink);color:#fff;font-size:13px;font-weight:700;
+  padding:12px 22px;border-radius:var(--r-pill);box-shadow:0 10px 30px rgba(32,30,29,.3);
+  opacity:0;transform:translateY(10px);transition:opacity .22s ease,transform .22s ease;
+  pointer-events:none;z-index:50;
+}
+.toast.show{opacity:1;transform:translateY(0)}
+
+/* ---------- sections ---------- */
+.section{padding-block:54px}
+.section-head{margin-bottom:32px;max-width:52ch}
+.section-head h2{font-size:clamp(25px,3.4vw,38px);font-weight:800;letter-spacing:-.4px;margin-bottom:12px}
+.section-head p{font-size:15.5px;color:var(--ink-55);line-height:1.9}
+.legend{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.legend span{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;font-weight:700;background:var(--surface);border:1px solid var(--hair);border-radius:var(--r-pill);padding:6px 13px}
+.swatch{width:9px;height:9px;border-radius:3px;flex:none}
+.swatch.m{background:var(--sage)}
+.swatch.a{background:var(--ink)}
+.swatch.c{background:var(--terra)}
+
+/* ---------- cycle ---------- */
+.cycle{display:grid;grid-template-columns:.92fr 1.08fr;gap:26px;align-items:start}
+.steps{display:flex;flex-direction:column;gap:9px;order:2}
+.step{
+  display:flex;align-items:flex-start;gap:14px;width:100%;text-align:start;background:var(--surface);
+  border:1px solid var(--hair);border-radius:16px;padding:15px 17px;cursor:pointer;font-family:var(--ar);
+  color:inherit;transition:border-color .16s ease,transform .16s ease;position:relative;
+}
+.step:hover{transform:translateX(-3px);border-color:var(--line)}
+.step:focus-visible{outline:3px solid var(--terra);outline-offset:2px}
+.step .idx{width:30px;height:30px;border-radius:50%;flex:none;display:grid;place-items:center;font-family:var(--lt);font-weight:800;font-size:13px;background:var(--chip);color:var(--ink-55);transition:background .16s ease,color .16s ease}
+.step .txt b{display:block;font-size:15px;font-weight:800;margin-bottom:4px}
+.step .txt small{font-size:12.5px;color:var(--ink-55);line-height:1.7}
+.step .rail{position:absolute;inset-inline-start:0;inset-block:14px;width:3px;border-radius:3px;background:transparent;transition:background .16s ease}
+.step[data-side="m"] .rail{background:var(--sage-200)}
+.step[data-side="a"] .rail{background:rgba(32,30,29,.16)}
+.step[data-side="c"] .rail{background:var(--terra-200)}
+.step[aria-selected="true"]{border-color:var(--sage)}
+.step[aria-selected="true"] .idx{background:var(--sage);color:#fff}
+.step[data-side="a"][aria-selected="true"]{border-color:var(--ink)}
+.step[data-side="a"][aria-selected="true"] .idx{background:var(--ink)}
+.step[data-side="c"][aria-selected="true"]{border-color:var(--terra)}
+.step[data-side="c"][aria-selected="true"] .idx{background:var(--terra)}
+.step[data-side="m"][aria-selected="true"] .rail{background:var(--sage)}
+.step[data-side="a"][aria-selected="true"] .rail{background:var(--ink)}
+.step[data-side="c"][aria-selected="true"] .rail{background:var(--terra)}
+
+.preview{order:1;position:sticky;top:calc(env(safe-area-inset-top,0px) + 16px);background:var(--surface);border:1px solid var(--hair);border-radius:var(--r-card);padding:26px 26px 22px;box-shadow:0 10px 32px rgba(32,30,29,.07)}
+.preview-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:6px}
+.preview-head h3{font-size:19px;font-weight:800}
+.who{font-size:12px;font-weight:800;padding:5px 12px;border-radius:var(--r-pill)}
+.who.m{background:var(--sage-100);color:var(--sage-deep)}
+.who.a{background:var(--chip);color:var(--ink-75)}
+.who.c{background:var(--terra-100);color:var(--terra-deep)}
+.preview > p{font-size:14.5px;line-height:2;color:var(--ink-75);margin-block:10px 18px}
+.mock{background:var(--surface-2);border:1px solid var(--hair);border-radius:16px;padding:14px 16px}
+.mock-label{font-size:11.5px;font-weight:800;color:var(--ink-42);margin-bottom:10px;letter-spacing:.04em}
+.navrow{display:flex;align-items:center;gap:10px;margin-top:18px}
+.navbtn{
+  font-family:var(--ar);font-size:13px;font-weight:800;padding:9px 16px;border-radius:var(--r-pill);
+  border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer;
+}
+.navbtn:hover{border-color:var(--ink-42)}
+.navbtn:disabled{opacity:.4;cursor:default}
+.navbtn:focus-visible{outline:2px solid var(--terra);outline-offset:2px}
+.track{flex:1;height:3px;border-radius:3px;background:var(--hair);overflow:hidden}
+.track i{display:block;height:100%;border-radius:3px;background:var(--sage);transition:width .3s ease}
+
+/* ---------- roles / bounds ---------- */
+.roles,.bounds{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.role{background:var(--surface);border:1px solid var(--hair);border-radius:var(--r-card);padding:24px 22px;box-shadow:0 3px 14px rgba(32,30,29,.04);display:flex;flex-direction:column;gap:11px}
+.role .glyph{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;font-size:19px;line-height:1}
+.role.c .glyph{background:var(--terra-100)}
+.role.m .glyph{background:var(--sage-100)}
+.role.a .glyph{background:var(--chip)}
+.role h3{font-size:18px;font-weight:800}
+.role p{font-size:14px;line-height:1.95;color:var(--ink-75)}
+.role .note{font-size:12.5px;font-weight:700;margin-top:auto;padding-top:12px;border-top:1px solid var(--hair)}
+.role.c .note{color:var(--terra-deep)}
+.role.m .note{color:var(--sage-deep)}
+.role.a .note{color:var(--ink-55)}
+.bound{background:var(--cream);border:1px solid var(--cream-deep);border-radius:18px;padding:22px}
+.bound h4{font-size:16.5px;font-weight:800;color:var(--terra-deep);margin-bottom:9px}
+.bound p{font-size:13.8px;line-height:1.95;color:var(--ink-75)}
+
+/* ---------- access ---------- */
+.access{
+  background:var(--ink);border-radius:26px;padding:40px 32px;color:#fff;
+  display:grid;grid-template-columns:1fr 1fr;gap:34px;align-items:center;
+}
+.access h2{font-size:clamp(22px,3vw,30px);font-weight:800;margin-bottom:12px}
+.access p{font-size:14.5px;line-height:2;color:rgba(255,255,255,.6)}
+.urlbox{
+  background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);border-radius:16px;
+  padding:18px 20px;display:flex;flex-direction:column;gap:12px;
+}
+.urlbox small{font-size:11.5px;font-weight:800;color:rgba(255,255,255,.55);letter-spacing:.04em}
+.urlbox .u{font-family:var(--lt);font-weight:800;font-size:15px;direction:ltr;unicode-bidi:isolate;word-break:break-all;color:#fff}
+.urlbox .btn{align-self:flex-start}
+.steps-inline{list-style:none;margin:16px 0 0;padding:0;display:flex;flex-direction:column;gap:9px}
+.steps-inline li{display:flex;gap:10px;font-size:13.5px;line-height:1.75;color:rgba(255,255,255,.72)}
+.steps-inline .n{font-family:var(--lt);font-weight:800;color:var(--terra);flex:none}
+
+/* ---------- closing ---------- */
+.closing{background:var(--surface);border:1px solid var(--hair);border-radius:28px;padding:50px 30px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:16px;box-shadow:0 12px 36px rgba(32,30,29,.06);margin-block:54px}
+.closing .mark{width:52px;height:52px;border-radius:16px}
+.closing .mark span{font-size:24px}
+.closing h2{font-size:clamp(24px,3.4vw,34px);font-weight:800;letter-spacing:-.4px}
+.closing p{font-size:15px;color:var(--ink-55);line-height:1.9;max-width:46ch}
+.ask{margin-top:10px;background:var(--surface-2);border:1px dashed var(--line);border-radius:18px;padding:22px 24px;text-align:start;max-width:560px;width:100%}
+.ask b{display:block;font-size:14.5px;font-weight:800;margin-bottom:12px}
+.ask ol{margin:0;padding-inline-start:20px;display:flex;flex-direction:column;gap:9px}
+.ask li{font-size:14px;line-height:1.85;color:var(--ink-75)}
+.foot{padding-block:0 40px;text-align:center;font-size:12.5px;color:var(--ink-42);line-height:1.9}
+
+@media (max-width:900px){
+  .hero{grid-template-columns:1fr;gap:36px;padding-block:26px 40px}
+  .hero-copy{padding-top:0}
+  .demo{order:-1}
+  .cycle{grid-template-columns:1fr}
+  .preview{position:static;order:2}
+  .steps{order:1}
+  .roles,.bounds{grid-template-columns:1fr}
+  .access{grid-template-columns:1fr;gap:26px;padding:32px 24px}
+}
+@media (max-width:420px){
+  .page{padding-inline:16px}
+  .closing{padding:36px 20px;border-radius:22px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<div class="page">
+<div class="wrap">
+
+  <header class="masthead">
+    <div class="wordmark"><div class="mark"><span>m</span></div><b>menu.</b></div>
+    <div class="tag">نسخة تجريبية · بيانات اصطناعية</div>
+  </header>
+
+  <!-- HERO + LIVE DEMO -->
+  <section class="hero">
+    <div class="hero-copy">
+      <div class="eyebrow">قوائم المطاعم والمقاهي</div>
+      <h1>القائمة تُبنى مرة،<br><span class="accent">والرمز يبقى للأبد.</span></h1>
+      <p class="lede">
+        كل منتج في منيو له رمز ثابت يختصر الطلب: تقول
+        <span class="code" style="color:var(--terra-deep)">A01</span>
+        بدل الاسم الطويل. التاجر يبني قائمته، والإدارة تعتمدها، والزبون يبحث بالرمز —
+        بلا حساب، وبلا سلة، وبلا إعادة طباعة.
+      </p>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="/" target="_blank" rel="noopener">افتح التطبيق</a>
+        <a class="btn btn-ghost" href="#cycle">شاهد الدورة كاملة</a>
+      </div>
+      <div class="stats">
+        <div class="stat"><span class="big">0</span><small>حساب مطلوب لتصفّح القوائم</small></div>
+        <div class="stat"><span class="big">3</span><small>أدوار داخل تطبيق واحد</small></div>
+        <div class="stat"><span class="big c">A01</span><small>رمز ثابت لا يتغيّر مع الاسم ولا السعر</small></div>
+      </div>
+    </div>
+
+    <div class="demo">
+      <div class="demo-hint">↓ جرّبه هنا قبل ما تفتحه</div>
+
+      <div class="roletabs" role="group" aria-label="اختر الدور">
+        <button type="button" data-r="c" aria-pressed="true">الزبون</button>
+        <button type="button" data-r="m" aria-pressed="false">التاجر</button>
+        <button type="button" data-r="a" aria-pressed="false">الإدارة</button>
+      </div>
+
+      <div class="phone">
+        <div class="screen">
+          <div class="screen-top">
+            <b>menu.</b>
+            <span class="screen-who c" id="who">الزبون</span>
+          </div>
+          <div id="stage"></div>
+        </div>
+      </div>
+
+      <div class="demo-foot">
+        <span id="hint">ابحث برمز مثل A01</span>
+        <button type="button" class="linkbtn" id="reset">أعد الضبط</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- CYCLE -->
+  <section class="section" id="cycle">
+    <div class="section-head">
+      <h2>الدورة كاملة — من أول تصنيف إلى أول بحث</h2>
+      <p>اضغط أي خطوة لتشاهدها. لون كل خطوة يقول لك مَن يقوم بها: التاجر، أم الإدارة، أم الزبون.</p>
+      <div class="legend">
+        <span><i class="swatch m"></i> التاجر</span>
+        <span><i class="swatch a"></i> الإدارة</span>
+        <span><i class="swatch c"></i> الزبون</span>
+      </div>
+    </div>
+    <div class="cycle">
+      <div class="preview" id="preview" aria-live="polite">
+        <div class="preview-head">
+          <h3 id="pv-title"></h3>
+          <span class="who m" id="pv-who"></span>
+        </div>
+        <p id="pv-body"></p>
+        <div class="mock">
+          <div class="mock-label" id="pv-label"></div>
+          <div id="pv-mock"></div>
+        </div>
+        <div class="navrow">
+          <button type="button" class="navbtn" id="pv-prev">السابق</button>
+          <div class="track"><i id="pv-track"></i></div>
+          <button type="button" class="navbtn" id="pv-next">التالي</button>
+        </div>
+      </div>
+      <div class="steps" role="tablist" aria-label="خطوات الدورة"></div>
+    </div>
+  </section>
+
+  <!-- ROLES -->
+  <section class="section">
+    <div class="section-head">
+      <h2>ثلاثة أدوار داخل تطبيق واحد</h2>
+      <p>الرابط واحد للجميع، والدور يُختار من شاشة البداية: «كيف تحب تستخدم menu؟»</p>
+    </div>
+    <div class="roles">
+      <div class="role c">
+        <div class="glyph">🔎</div><h3>الزبون</h3>
+        <p>يتصفّح المطاعم والمقاهي القريبة منه، أو يكتب رمز المنتج مباشرة فيصل إليه. يحفظ ما أعجبه في المفضلة، ويشارك أي منتج برمزه.</p>
+        <div class="note">بلا تسجيل — يفتح ويتصفّح فورًا</div>
+      </div>
+      <div class="role m">
+        <div class="glyph">🏪</div><h3>التاجر</h3>
+        <p>يضيف تصنيفاته ومنتجاته، والرموز تُنشأ تلقائيًا. يغيّر السعر، ويعلّم «نفذت الكمية» بضغطة، فيرى الزبون التحديث لحظيًا.</p>
+        <div class="note">يجهّز قائمته حتى أثناء المراجعة</div>
+      </div>
+      <div class="role a">
+        <div class="glyph">🛡️</div><h3>الإدارة</h3>
+        <p>ترى الطلبات الجديدة باسم المتجر ونوعه وعدد منتجاته، وتعتمد أو ترفض. وترى المتاجر المنشورة وإجمالي المنتجات في مكان واحد.</p>
+        <div class="note">لا يظهر أي متجر للعملاء قبل اعتماده</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BOUNDS -->
+  <section class="section">
+    <div class="section-head">
+      <h2>ما لا يفعله منيو — عن قصد</h2>
+      <p>حدود المنتج واضحة، وهي جزء من التصميم لا نقص فيه.</p>
+    </div>
+    <div class="bounds">
+      <div class="bound"><h4>لا طلبات ولا دفع</h4><p>منيو يعرض القائمة فقط. لا سلّة ولا فواتير ولا تحصيل — الطلب يتم مع المطعم كما هو معتاد.</p></div>
+      <div class="bound"><h4>لا نشر بلا اعتماد</h4><p>كل متجر جديد يمرّ بمراجعة بشرية قبل أن يراه أي عميل. القرار يتخذه إنسان، لا قاعدة آلية.</p></div>
+      <div class="bound"><h4>لا رمز يتغيّر</h4><p>الرمز يُولد مرة واحدة من حرف التصنيف وأول رقم متاح، ويبقى ثابتًا حتى لو تغيّر اسم المنتج أو سعره.</p></div>
+    </div>
+  </section>
+
+  <!-- ACCESS -->
+  <section class="section">
+    <div class="access">
+      <div>
+        <h2>رابط واحد — والدور تختاره داخل التطبيق</h2>
+        <p>افتحه من المتصفح على جوالك، وأضفه إلى الشاشة الرئيسية ليعمل كتطبيق كامل الشاشة. بلا متجر تطبيقات وبلا تحميل.</p>
+        <ol class="steps-inline">
+          <li><span class="n">1</span><span>افتح الرابط، واختر «لدي متجر»، وسجّل مطعمًا جديدًا.</span></li>
+          <li><span class="n">2</span><span>أضف تصنيفًا ثم منتجًا، وراقب الرمز وهو يتكوّن وحده.</span></li>
+          <li><span class="n">3</span><span>ارجع لشاشة البداية، وادخل «دخول الإدارة»، واعتمد المطعم.</span></li>
+          <li><span class="n">4</span><span>بدّل لدور الزبون، وابحث عن منتجك برمزه.</span></li>
+        </ol>
+      </div>
+      <div class="urlbox">
+        <small>رابط التجربة</small>
+        <div class="u">menu-app-33cd1.web.app</div>
+        <a class="btn btn-primary" href="/" target="_blank" rel="noopener">افتح التطبيق</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- CLOSING -->
+  <section class="closing">
+    <div class="mark"><span>m</span></div>
+    <h2>جرّبه بنفسك — خمس دقائق تكفي</h2>
+    <p>ادخل بدور التاجر، وابنِ تصنيفًا ومنتجًا واحدًا، ثم اعتمده من الإدارة، ثم ابحث عنه برمزه كزبون.</p>
+    <div class="cta-row">
+      <a class="btn btn-primary" href="/" target="_blank" rel="noopener">ابدأ التجربة</a>
+    </div>
+    <div class="ask">
+      <b>بعد التجربة، اكتب ثلاث نقاط فقط:</b>
+      <ol>
+        <li>أين توقّفت أو احتجت أن تسأل؟</li>
+        <li>ما الشيء الذي كان المفروض يصير وحده ولم يحدث؟</li>
+        <li>هل يفهمه صاحب مطعم بلا شرح منّا؟</li>
+      </ol>
+    </div>
+  </section>
+
+  <div class="foot">البيانات في النسخة التجريبية اصطناعية بالكامل — جرّب بحرية.</div>
+</div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* ============ live demo state ============ */
+const SEED = () => ({
+  role: 'c',
+  approved: false,
+  query: '',
+  favs: new Set(),
+  items: [
+    { code:'A01', name:'قهوة مختصة',      cat:'مشروبات ساخنة', price:18, avail:true },
+    { code:'A02', name:'كابتشينو',        cat:'مشروبات ساخنة', price:16, avail:true },
+    { code:'A03', name:'شاي أخضر بالنعناع', cat:'مشروبات ساخنة', price:12, avail:true },
+    { code:'B01', name:'كيك التمر',        cat:'حلويات',        price:26, avail:true },
+    { code:'B02', name:'تشيز كيك الفستق',  cat:'حلويات',        price:29, avail:false },
+    { code:'C01', name:'آيس لاتيه',        cat:'مشروبات باردة', price:21, avail:true }
+  ]
+});
+let S = SEED();
+
+const stage = document.getElementById('stage');
+const whoEl = document.getElementById('who');
+const hintEl = document.getElementById('hint');
+const toastEl = document.getElementById('toast');
+const LABEL = { c:'الزبون', m:'التاجر', a:'الإدارة' };
+const HINT = {
+  c:'ابحث برمز مثل A01، واضغط ♡ للحفظ',
+  m:'اضغط «متوفر» لتعلّمه «نفذت الكمية»',
+  a:'اعتمد المطعم وشوف وش يصير عند الزبون'
+};
+
+let toastTimer;
+function toast(msg){
+  toastEl.textContent = msg;
+  toastEl.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toastEl.classList.remove('show'), 2600);
+}
+
+const esc = (s) => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+function matches(it, q){
+  q = q.trim().toLowerCase();
+  if (!q) return true;
+  return it.code.toLowerCase().includes(q) || it.name.toLowerCase().includes(q);
+}
+
+function itemRow(it, opts){
+  const price = `<span class="price${it.avail ? '' : ' off'}">${it.price}</span>`;
+  const tail = opts.role === 'c'
+    ? (it.avail
+        ? `<button type="button" class="heart" data-fav="${it.code}" aria-pressed="${S.favs.has(it.code)}" aria-label="حفظ ${esc(it.name)} في المفضلة">${S.favs.has(it.code) ? '♥' : '♡'}</button>`
+        : `<span class="pill out">نفذت</span>`)
+    : `<button type="button" class="pill ${it.avail ? 'ok' : 'out'}" data-toggle="${it.code}">${it.avail ? 'متوفر' : 'نفذت'}</button>`;
+  return `<div class="row">
+      <span class="code-chip${opts.role === 'm' ? ' sg' : ''}">${it.code}</span>
+      <div class="meta"><b>${esc(it.name)}</b><small>${esc(it.cat)}</small></div>
+      ${price}${tail}
+    </div>`;
+}
+
+function render(){
+  whoEl.className = 'screen-who ' + S.role;
+  whoEl.textContent = LABEL[S.role];
+  hintEl.textContent = HINT[S.role];
+  document.querySelectorAll('.roletabs button').forEach(b =>
+    b.setAttribute('aria-pressed', b.dataset.r === S.role ? 'true' : 'false'));
+
+  if (S.role === 'c') return renderCustomer();
+  if (S.role === 'm') return renderMerchant();
+  return renderAdmin();
+}
+
+function renderCustomer(){
+  if (!S.approved){
+    stage.innerHTML = `
+      <div class="searchbox"><span class="mag">⌕</span>
+        <input id="q" type="search" placeholder="ابحث بالرمز أو الاسم... مثال A01" value="${esc(S.query)}" disabled>
+      </div>
+      <div class="empty"><div>
+        <b>لا توجد مطاعم بعد</b>
+        «مقهى الحيّ» ما زال تحت المراجعة.<br>
+        بدّل لدور الإدارة واعتمده أولًا.
+      </div></div>`;
+    return;
+  }
+  const found = S.items.filter(it => matches(it, S.query));
+  const list = found.length
+    ? found.map(it => itemRow(it, { role:'c' })).join('')
+    : `<div class="empty"><div>
+         <b>لا توجد نتائج</b>
+         لا نتائج لـ “${esc(S.query)}”.<br>جرّب حرف التصنيف مع الرقم، مثل A02.
+       </div></div>`;
+  stage.innerHTML = `
+    <div class="searchbox"><span class="mag">⌕</span>
+      <input id="q" type="search" placeholder="ابحث بالرمز أو الاسم... مثال A01" value="${esc(S.query)}">
+    </div>
+    <div class="banner sg">مقهى الحيّ · ${S.items.length} منتجات · قريب منك</div>
+    <div class="list">${list}</div>`;
+  const q = document.getElementById('q');
+  q.addEventListener('input', e => { S.query = e.target.value; renderCustomer(); document.getElementById('q').focus(); });
+}
+
+function renderMerchant(){
+  const out = S.items.filter(i => !i.avail).length;
+  stage.innerHTML = `
+    ${S.approved ? '' : '<div class="banner">طلبك قيد مراجعة الإدارة. يمكنك تجهيز قائمتك الآن، وتُنشر للعملاء فور الاعتماد.</div>'}
+    <div class="ministats">
+      <div class="ministat"><b>${S.items.length}</b><small>إجمالي المنتجات</small></div>
+      <div class="ministat"><b>${out}</b><small>نفذت الكمية</small></div>
+      <div class="ministat"><b>3</b><small>التصنيفات</small></div>
+    </div>
+    <div class="list">${S.items.map(it => itemRow(it, { role:'m' })).join('')}</div>`;
+}
+
+function renderAdmin(){
+  stage.innerHTML = `
+    <div class="ministats">
+      <div class="ministat"><b>${S.approved ? 0 : 1}</b><small>طلب جديد</small></div>
+      <div class="ministat"><b>${S.approved ? 1 : 0}</b><small>مطعم منشور</small></div>
+      <div class="ministat"><b>${S.items.length}</b><small>منتج</small></div>
+    </div>
+    ${S.approved
+      ? `<div class="banner sg">لا توجد طلبات جديدة حاليًا.</div>
+         <div class="list"><div class="row">
+           <div class="meta"><b>مقهى الحيّ</b><small>مقهى · ${S.items.length} منتجات</small></div>
+           <span class="pill ok">منشور</span>
+         </div></div>`
+      : `<div class="banner">لا يظهر المطعم للعملاء إلا بعد اعتماده.</div>
+         <div class="list"><div class="row">
+           <div class="meta"><b>مقهى الحيّ</b><small>مقهى · ${S.items.length} منتجات</small></div>
+           <button type="button" class="pill ok" data-approve="1">اعتماد</button>
+           <button type="button" class="pill out" data-reject="1">رفض</button>
+         </div></div>`}`;
+}
+
+/* ---- delegated interactions ---- */
+stage.addEventListener('click', (e) => {
+  const fav = e.target.closest('[data-fav]');
+  if (fav){
+    const c = fav.dataset.fav;
+    S.favs.has(c) ? S.favs.delete(c) : S.favs.add(c);
+    toast(S.favs.has(c) ? `أُضيف ${c} إلى المفضلة` : `أُزيل ${c} من المفضلة`);
+    renderCustomer();
+    return;
+  }
+  const tog = e.target.closest('[data-toggle]');
+  if (tog){
+    const it = S.items.find(i => i.code === tog.dataset.toggle);
+    it.avail = !it.avail;
+    toast(it.avail ? `${it.code} عاد متوفرًا — الرمز نفسه` : `${it.code} نفذت الكمية — يظهر للزبون فورًا`);
+    renderMerchant();
+    return;
+  }
+  if (e.target.closest('[data-approve]')){
+    S.approved = true;
+    toast('اعتُمد «مقهى الحيّ» — ظهر للزبون الآن');
+    renderAdmin();
+    return;
+  }
+  if (e.target.closest('[data-reject]')){
+    toast('رُفض الطلب — لن يظهر للعملاء');
+  }
+});
+
+document.querySelectorAll('.roletabs button').forEach(b =>
+  b.addEventListener('click', () => { S.role = b.dataset.r; render(); }));
+
+document.getElementById('reset').addEventListener('click', () => {
+  const r = S.role; S = SEED(); S.role = r; render(); toast('أُعيد ضبط التجربة');
+});
+
+/* ============ cycle walkthrough ============ */
+const SIDE = { m:'التاجر', a:'الإدارة', c:'الزبون' };
+const STEPS = [
+  { side:'m', title:'التاجر يسجّل متجره', sub:'يختار «لدي متجر» من شاشة البداية',
+    pvTitle:'تسجيل متجر جديد',
+    body:'من شاشة البداية يختار التاجر «لدي متجر»، ويسجّل باسم المتجر ونوعه. لا يُطلب رقم جوال، ولا أي بيانات بنكية. التصفّح متاح دون تسجيل، والتسجيل مطلوب لأصحاب المتاجر فقط.',
+    label:'طلب جديد',
+    mock:'<div class="row"><div class="meta"><b>مقهى الحيّ</b><small>مقهى · لا توجد منتجات بعد</small></div><span class="pill rev">تحت المراجعة</span></div>' },
+  { side:'m', title:'يبني تصنيفاته', sub:'ولكل تصنيف حرف واحد يخصّه',
+    pvTitle:'كل تصنيف يأخذ حرفًا',
+    body:'«مشروبات ساخنة» تأخذ الحرف A، و«حلويات» تأخذ الحرف B. هذا الحرف هو الجزء الأول من رمز كل منتج داخل التصنيف، ولهذا يبدأ البناء من التصنيفات لا من المنتجات.',
+    label:'التصنيفات',
+    mock:'<div class="row"><span class="code-chip sg">A</span><div class="meta"><b>مشروبات ساخنة</b><small>٣ منتجات</small></div></div><div class="row"><span class="code-chip sg">B</span><div class="meta"><b>حلويات</b><small>٢ منتجات</small></div></div>' },
+  { side:'m', title:'الرمز يتولّد وحده', sub:'حرف التصنيف + أول رقم متاح',
+    pvTitle:'رمز ثابت لا يتغيّر',
+    body:'يتكوّن الرمز تلقائيًا من حرف التصنيف مع أول رقم متاح، ويبقى ثابتًا دائمًا حتى لو تغيّر الاسم أو السعر. لا يكتبه التاجر ولا يستطيع تعديله — وهذا بالضبط ما يجعله صالحًا للطباعة على الطاولة.',
+    label:'منتج جديد',
+    mock:'<div class="row"><span class="code-chip">A01</span><div class="meta"><b>قهوة مختصة</b><small>أُنشئ الرمز تلقائيًا</small></div><span class="price">18</span></div>' },
+  { side:'a', title:'الإدارة تعتمد المتجر', sub:'اعتماد أو رفض — والقرار بشري',
+    pvTitle:'طلب بانتظار الموافقة',
+    body:'يصل الطلب إلى شاشة الإدارة باسم المتجر ونوعه وعدد منتجاته. الإدارة تعتمد أو ترفض، ولا يظهر المطعم للعملاء إلا بعد اعتماده.',
+    label:'طلبات بانتظار الموافقة',
+    mock:'<div class="row"><div class="meta"><b>مقهى الحيّ</b><small>مقهى · ٦ منتجات</small></div><span class="pill ok">اعتماد</span><span class="pill out">رفض</span></div>' },
+  { side:'a', title:'القائمة تُنشر لحظيًا', sub:'من «تحت المراجعة» إلى منشور',
+    pvTitle:'النشر لحظة الاعتماد',
+    body:'يستطيع التاجر تجهيز قائمته كاملة أثناء المراجعة: طلبك قيد مراجعة الإدارة، ويمكنك تجهيز قائمتك الآن، وتُنشر للعملاء فور الاعتماد.',
+    label:'المتاجر المنشورة',
+    mock:'<div class="row"><div class="meta"><b>مقهى الحيّ</b><small>مقهى · ٦ منتجات</small></div><span class="pill ok">منشور</span></div>' },
+  { side:'c', title:'الزبون يبحث بالرمز', sub:'أو يتصفّح «قريب منك»',
+    pvTitle:'بحث بالاسم أو بالرمز',
+    body:'يكتب الزبون A01 فيصل إلى المنتج مباشرة، أو يتصفّح المطاعم والمقاهي القريبة منه بقوائم محدّثة لحظيًا. ويضغط ♡ ليحفظ أي منتج في مفضلته.',
+    label:'نتيجة البحث عن «A01»',
+    mock:'<div class="row"><span class="code-chip">A01</span><div class="meta"><b>قهوة مختصة</b><small>مقهى الحيّ</small></div><span class="price">18</span><span class="pill ok">متوفر</span></div>' },
+  { side:'m', title:'التاجر يحدّث لحظيًا', sub:'سعر جديد أو «نفذت الكمية»',
+    pvTitle:'تحديث بلا إعادة طباعة',
+    body:'يغيّر التاجر السعر أو يعلّم المنتج «نفذت الكمية» بضغطة واحدة، فيرى الزبون التغيير فورًا. الرمز المطبوع على الطاولة لا يتغيّر أبدًا.',
+    label:'تحديث المنتج',
+    mock:'<div class="row"><span class="code-chip">A01</span><div class="meta"><b>قهوة مختصة</b><small>السعر الجديد ظاهر للزبون</small></div><span class="price">20</span><span class="pill out">نفذت</span></div>' }
+];
+
+const stepsEl = document.querySelector('.steps');
+let cur = 0;
+
+STEPS.forEach((s, i) => {
+  const b = document.createElement('button');
+  b.className = 'step'; b.type = 'button'; b.id = 'step-' + i;
+  b.setAttribute('role','tab'); b.dataset.side = s.side;
+  b.setAttribute('aria-selected', i === 0 ? 'true' : 'false');
+  b.setAttribute('aria-controls','preview');
+  b.innerHTML = '<i class="rail"></i><span class="idx">' + (i+1) + '</span><span class="txt"><b></b><small></small></span>';
+  b.querySelector('.txt b').textContent = s.title;
+  b.querySelector('.txt small').textContent = s.sub;
+  b.addEventListener('click', () => select(i));
+  b.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowDown' || e.key === 'ArrowUp'){
+      e.preventDefault();
+      const n = (i + (e.key === 'ArrowDown' ? 1 : -1) + STEPS.length) % STEPS.length;
+      select(n); document.getElementById('step-' + n).focus();
+    }
+  });
+  stepsEl.appendChild(b);
+});
+
+function select(i){
+  cur = i;
+  const s = STEPS[i];
+  document.querySelectorAll('.step').forEach((el, j) =>
+    el.setAttribute('aria-selected', j === i ? 'true' : 'false'));
+  document.getElementById('pv-title').textContent = s.pvTitle;
+  const who = document.getElementById('pv-who');
+  who.className = 'who ' + s.side; who.textContent = SIDE[s.side];
+  document.getElementById('pv-body').textContent = s.body;
+  document.getElementById('pv-label').textContent = s.label;
+  document.getElementById('pv-mock').innerHTML = s.mock;
+  const t = document.getElementById('pv-track');
+  t.style.width = Math.round(((i+1) / STEPS.length) * 100) + '%';
+  t.style.background = s.side === 'c' ? 'var(--terra)' : s.side === 'a' ? 'var(--ink)' : 'var(--sage)';
+  document.getElementById('pv-prev').disabled = i === 0;
+  document.getElementById('pv-next').disabled = i === STEPS.length - 1;
+}
+document.getElementById('pv-prev').addEventListener('click', () => select(Math.max(0, cur - 1)));
+document.getElementById('pv-next').addEventListener('click', () => select(Math.min(STEPS.length - 1, cur + 1)));
+
+document.documentElement.lang = 'ar';
+document.documentElement.dir = 'rtl';
+render();
+select(0);
+</script>
+
+</body>
+</html>
